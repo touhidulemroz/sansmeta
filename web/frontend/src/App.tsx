@@ -1,11 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import FilesMode from './components/FilesMode'
 import TextMode from './components/TextMode'
+import { trackEvent } from './analytics'
 
 type Mode = 'files' | 'text'
 
 export default function App() {
   const [mode, setMode] = useState<Mode>('files')
+
+  useEffect(() => {
+    trackEvent('page_view', { path: mode })
+  }, [mode])
 
   return (
     <div className="shell">
@@ -19,12 +24,14 @@ export default function App() {
           <button
             className={mode === 'files' ? 'active' : ''}
             onClick={() => setMode('files')}
+            onMouseUp={() => trackEvent('mode_switch', { mode: 'files' })}
           >
             Files
           </button>
           <button
             className={mode === 'text' ? 'active' : ''}
             onClick={() => setMode('text')}
+            onMouseUp={() => trackEvent('mode_switch', { mode: 'text' })}
           >
             Text
           </button>

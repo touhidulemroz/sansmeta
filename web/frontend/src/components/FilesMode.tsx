@@ -13,6 +13,7 @@ import {
 import FileList from './FileList'
 import Landing from './Landing'
 import ProgressBar from './ProgressBar'
+import { trackEvent } from '../analytics'
 
 export interface LocalFile {
   id: number
@@ -121,6 +122,7 @@ export default function FilesMode() {
 
   async function runInspect() {
     if (files.length === 0 || busy) return
+    trackEvent('upload_start', { fileCount: files.length, mode: 'inspect' })
     setPhase('inspect')
     setError(null)
     setBatchSummary(null)
@@ -155,6 +157,7 @@ export default function FilesMode() {
 
   async function runClean() {
     if (files.length === 0 || busy) return
+    trackEvent('upload_start', { fileCount: files.length, mode: 'clean' })
     setPhase('clean')
     setError(null)
     setBatchSummary(null)
@@ -209,6 +212,7 @@ export default function FilesMode() {
           finishStopped()
           setBatchSummary('Stopped after the current file.')
         } else {
+          trackEvent('clean_complete', { fileCount: files.length })
           setBatchSummary('Batch finished.')
         }
         return
@@ -316,8 +320,8 @@ export default function FilesMode() {
           onRemove={removeFile}
           onClear={clearFiles}
           onToggle={toggleReport}
-          onDownload={(item) => item.downloadUrl && download(item.downloadUrl)}
-          onDownloadZip={() => zipUrl && download(zipUrl)}
+          onDownload={(item) => { if (item.downloadUrl) { download(item.downloadUrl); trackEvent('download', { type: 'single' }) } }}
+          onDownloadZip={() => { if (zipUrl) { download(zipUrl); trackEvent('download', { type: 'zip' }) } }}
         />
       )}
     </div>

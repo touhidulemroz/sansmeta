@@ -98,6 +98,33 @@ Docker spaces now require a paid HF PRO subscription, so Render is the recommend
 
 Note: the Docker image includes only the stdlib engine core. Optional external tools (`exiftool`, `c2patool`, `qpdf`, `ghostscript`, `ffmpeg`) are not installed, so some metadata probes and PDF deep-cleaning degrade gracefully — the same behavior the Mac app has when those tools are absent.
 
+## Analytics
+
+The web frontend includes Google Analytics (GA4) for usage tracking.
+
+### What's tracked
+
+- **Page views** — fired on mode switches (since the app is an SPA without routing)
+- **Mode switches** — when users switch between Files and Text modes
+- **Uploads** — when users start inspecting or cleaning (with file count)
+- **Clean completions** — when a batch finishes (with file count)
+- **Downloads** — individual files and zip downloads
+- **Text cleaning** — when text mode is used (with character count)
+
+### Configuration
+
+The GA4 Measurement ID is set in `frontend/index.html`:
+
+```html
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YOUR_ID"></script>
+```
+
+Replace `G-YOUR_ID` with your GA4 Measurement ID to track a different property.
+
+### Disabling analytics
+
+To remove analytics entirely, delete the `<script>` tags from `frontend/index.html` and the `trackEvent` calls in the React components.
+
 ## Relationship to the Mac app
 
 `app/`, `upstream/`, `tests/`, and `scripts/build.sh` are frozen: the web backend never modifies them, only invokes `app/bridge.py` read-only. Both apps can run side by side; the engine is stateless per invocation and export naming is collision-safe across processes.

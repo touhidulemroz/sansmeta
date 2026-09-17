@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ApiError, cleanText } from '../api'
+import { trackEvent } from '../analytics'
 
 export default function TextMode() {
   const [source, setSource] = useState('')
@@ -11,6 +12,7 @@ export default function TextMode() {
 
   async function runClean() {
     if (busy) return
+    trackEvent('text_clean', { charCount: source.length })
     setBusy(true)
     setError(null)
     setCopied(false)
