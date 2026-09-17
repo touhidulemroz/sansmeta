@@ -16,36 +16,36 @@ const TABS: { id: InfoTab; label: string }[] = [
 ]
 
 const STEPS = [
-  { n: '01', title: 'Add files', text: 'Drop or browse images, documents, audio, video, or text.' },
-  { n: '02', title: 'Inspect all', text: 'Review the hidden metadata and text marks the engine finds.' },
-  { n: '03', title: 'Clean & download', text: 'Grab each cleaned copy or the whole batch as a zip.' },
+  { title: 'Add files', text: 'Drop or browse images, documents, audio, video, or text.' },
+  { title: 'Inspect', text: 'See every hidden mark the engine finds — nothing changes yet.' },
+  { title: 'Clean & download', text: 'Grab each cleaned copy, or the whole batch as a zip.' },
 ]
 
 const FEATURES = [
-  { title: 'Inspect before you clean', text: 'See hidden marks per file — nothing changes without your go-ahead.' },
-  { title: 'Safe batch cleaning', text: 'Originals are never modified; cleans write a new name.cleaned.ext copy.' },
-  { title: 'Never overwrites', text: 'Existing exports get -2, -3 suffixes instead.' },
-  { title: 'Metadata control', text: 'Keep ordinary photo metadata, or request broader removal.' },
-  { title: 'Text mode', text: 'Strip invisible Unicode marks from pasted text instantly.' },
-  { title: 'Private by design', text: 'No account, no tracking — files are deleted after one hour.' },
+  { title: 'Inspect first', text: 'Preview hidden marks before anything is touched.' },
+  { title: 'Safe copies only', text: 'Originals are never modified.' },
+  { title: 'Never overwrites', text: 'Existing exports get -2, -3 suffixes.' },
+  { title: 'Metadata control', text: 'Keep normal metadata, or strip more.' },
+  { title: 'Text mode', text: 'Paste text and strip invisible marks instantly.' },
+  { title: 'Private', text: 'No account. Files deleted after one hour.' },
 ]
 
 const FORMAT_GROUPS = [
   { name: 'Images', formats: ['PNG', 'JPEG', 'WebP', 'AVIF', 'HEIC', 'SVG'] },
-  { name: 'Documents', formats: ['PDF', 'DOCX', 'XLSX', 'PPTX', 'ODT', 'EPUB', 'HTML', 'Markdown'] },
-  { name: 'Audio & video', formats: ['MP4', 'MOV', 'M4A', 'MP3', 'WAV', 'FLAC'] },
-  { name: 'Text & code', formats: ['TXT', 'JSON', 'CSV', 'CSS', 'JS', 'Python', 'and more'] },
+  { name: 'Documents', formats: ['PDF', 'DOCX', 'XLSX', 'PPTX', 'ODT', 'EPUB', 'HTML'] },
+  { name: 'Audio & video', formats: ['MP4', 'MOV', 'M4A', 'MP3', 'WAV'] },
+  { name: 'Text & code', formats: ['TXT', 'JSON', 'CSV', 'CSS', 'JS', 'MD'] },
 ]
 
 const SCOPE = {
   removes: [
-    'Supported AI provenance metadata — C2PA, EXIF, and XMP fields',
-    'Hidden Unicode characters — zero-width spaces, unusual spaces, homoglyphs',
+    'AI provenance metadata — C2PA, EXIF, and XMP fields',
+    'Hidden Unicode characters — zero-width spaces, homoglyphs',
   ],
   keeps: [
     'Visible logos and watermarks drawn into the image',
     'Pixel-level SynthID watermarks',
-    'Text rewriting, or guarantees that AI detectors judge content human-written',
+    'Text rewriting, or AI-detector guarantees',
   ],
 }
 
@@ -55,24 +55,29 @@ export default function Landing({ onFiles, busy }: Props) {
   return (
     <div className="landing">
       <section className="hero">
-        <p className="eyebrow">Watermarks Cleaner — web</p>
-        <h2>Remove AI watermarks from your files.</h2>
+        <p className="eyebrow">Watermarks Cleaner · web</p>
+        <h1>
+          Remove AI <span className="accent">watermarks</span> in seconds.
+        </h1>
         <p className="hero-sub">
-          Strips C2PA, EXIF, and XMP provenance fields and hidden Unicode watermark characters.
-          No account. No tracking.
+          Strip C2PA, EXIF, and XMP provenance and hidden Unicode marks from images,
+          documents, audio, and video. No account needed.
         </p>
+
         <FileDropZone onFiles={onFiles} busy={busy}>
-          <div className="drop-strip">
-            <span className="drop-strip-main">
-              Drop files here <em>or browse</em>
-            </span>
-            <span className="drop-strip-meta">50 files per batch · cleaned copies deleted after 1 h</span>
+          <div className="hero-drop">
+            <div className="hero-drop-icon" aria-hidden="true">＋</div>
+            <div className="hero-drop-text">
+              <strong>Drop your files here</strong>
+              <span>or click to browse · up to 50 files per batch</span>
+            </div>
           </div>
         </FileDropZone>
-        <div className="hero-meta">
-          <span>Inspect first</span>
-          <span>Safe copies only</span>
-          <span>Engine runs on the host</span>
+
+        <div className="hero-chips">
+          <span>Batch processing</span>
+          <span>100 MB per file</span>
+          <span>Deletes after 1 h</span>
         </div>
       </section>
 
@@ -88,13 +93,13 @@ export default function Landing({ onFiles, busy }: Props) {
             </button>
           ))}
         </nav>
+
         <div className="info-panel">
           {tab === 'how' && (
             <div className="how-panel">
               <ol className="steps-list">
                 {STEPS.map((step) => (
-                  <li key={step.n}>
-                    <span className="step-num">{step.n}</span>
+                  <li key={step.title}>
                     <div>
                       <h4>{step.title}</h4>
                       <p>{step.text}</p>
@@ -112,6 +117,7 @@ export default function Landing({ onFiles, busy }: Props) {
               </dl>
             </div>
           )}
+
           {tab === 'formats' && (
             <div className="format-groups">
               {FORMAT_GROUPS.map((group) => (
@@ -124,55 +130,36 @@ export default function Landing({ onFiles, busy }: Props) {
                   </div>
                 </div>
               ))}
-              <p className="note">
-                Unsupported files are refused and never changed. PDF cleaning is best-effort
-                without optional tools (qpdf, Ghostscript).
-              </p>
+              <p className="note">Unsupported files are refused and never changed.</p>
             </div>
           )}
+
           {tab === 'scope' && (
             <div className="scope">
               <div className="scope-col">
                 <h4>Removes</h4>
-                <ul>
-                  {SCOPE.removes.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+                <ul>{SCOPE.removes.map((item) => <li key={item}>{item}</li>)}</ul>
               </div>
               <div className="scope-col">
                 <h4>Does not</h4>
-                <ul>
-                  {SCOPE.keeps.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+                <ul>{SCOPE.keeps.map((item) => <li key={item}>{item}</li>)}</ul>
               </div>
             </div>
           )}
+
           {tab === 'credits' && (
             <div className="credits">
               <p>
                 Built by{' '}
-                <a href="https://github.com/touhidulemroz" target="_blank" rel="noreferrer">
-                  touhidulemroz
-                </a>{' '}
-                —{' '}
-                <a
-                  href="https://github.com/touhidulemroz/watermarks-cleaner-mac"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="https://github.com/touhidulemroz" target="_blank" rel="noreferrer">touhidulemroz</a>
+                {' — '}
+                <a href="https://github.com/touhidulemroz/watermarks-cleaner-mac" target="_blank" rel="noreferrer">
                   watermarks-cleaner-mac
                 </a>
               </p>
               <p>
                 Cleaning engine:{' '}
-                <a
-                  href="https://github.com/guillaumemeyer/watermarks-remover"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="https://github.com/guillaumemeyer/watermarks-remover" target="_blank" rel="noreferrer">
                   guillaumemeyer/watermarks-remover
                 </a>{' '}
                 (MIT), vendored unmodified.
