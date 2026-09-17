@@ -56,9 +56,23 @@ docker build -t watermarks-cleaner-web .
 docker run -p 8000:8000 watermarks-cleaner-web
 ```
 
-## Host on Hugging Face Spaces (free)
+## Host free on Render
 
-The repo-root `Dockerfile` is ready for a free Docker space:
+The repo-root `render.yaml` Blueprint deploys the Docker service on Render's free plan:
+
+1. Sign up at render.com (GitHub login is easiest).
+2. **New + → Blueprint** → connect your GitHub account → select the `watermarks-cleaner-mac` repo.
+3. Render reads `render.yaml`, builds the Dockerfile, and deploys — your app is then live at `https://watermarks-cleaner.onrender.com`.
+
+Notes for the free plan:
+
+- The instance sleeps after ~15 min of inactivity; the next visit wakes it (cold start takes about a minute).
+- Job links stop working when the instance sleeps or redeploys — jobs are in-memory and files are ephemeral by design.
+- Upload cap is lowered to 100 MB (`WEB_MAX_FILE_BYTES`) in the Blueprint to stay within the free plan's RAM.
+
+## Host on Hugging Face Spaces
+
+Docker spaces now require a paid HF PRO subscription, so Render is the recommended free host. If you have PRO, the repo-root `Dockerfile` works there too:
 
 1. On huggingface.co, create a new Space and choose the **Docker** SDK (public or private).
 2. Push this repository to the Space's git remote:
@@ -81,12 +95,6 @@ The repo-root `Dockerfile` is ready for a free Docker space:
    pinned: false
    ---
    ```
-
-Notes for free spaces:
-
-- Spaces sleep after ~48 h of inactivity and wake on the next visit (cold start takes a minute or two).
-- Job links stop working when the space sleeps — jobs are in-memory and files are ephemeral by design.
-- If large uploads are slow through the HF proxy, lower the cap via a Space env variable, e.g. `WEB_MAX_FILE_BYTES=104857600` (100 MB).
 
 Note: the Docker image includes only the stdlib engine core. Optional external tools (`exiftool`, `c2patool`, `qpdf`, `ghostscript`, `ffmpeg`) are not installed, so some metadata probes and PDF deep-cleaning degrade gracefully — the same behavior the Mac app has when those tools are absent.
 
