@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react'
-import type { DragEvent, KeyboardEvent } from 'react'
-import { MAX_BATCH_FILES, MAX_FILE_MB } from '../api'
+import type { DragEvent, KeyboardEvent, ReactNode } from 'react'
 
 interface Props {
   onFiles: (files: File[]) => void
   busy: boolean
   compact?: boolean
+  children?: ReactNode
 }
 
-export default function FileDropZone({ onFiles, busy, compact = false }: Props) {
+export default function FileDropZone({ onFiles, busy, compact = false, children }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
@@ -49,19 +49,7 @@ export default function FileDropZone({ onFiles, busy, compact = false }: Props) 
           event.target.value = ''
         }}
       />
-      {compact ? (
-        <span className="drop-hint">Drop more files or click to browse</span>
-      ) : (
-        <div className="drop-content">
-          <div className="drop-icon" aria-hidden="true">＋</div>
-          <h3>Drop files to inspect &amp; clean</h3>
-          <p>
-            Images, documents, audio, video, or text — up to {MAX_BATCH_FILES} files,{' '}
-            {MAX_FILE_MB} MB each.
-          </p>
-          <span className="btn ghost">Browse files</span>
-        </div>
-      )}
+      {children ?? (compact ? <span className="drop-hint">Drop more files or click to browse</span> : null)}
     </div>
   )
 }

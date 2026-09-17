@@ -10,8 +10,8 @@ import {
   type InspectResult,
   type UploadHandle,
 } from '../api'
-import FileDropZone from './FileDropZone'
 import FileList from './FileList'
+import Landing from './Landing'
 import ProgressBar from './ProgressBar'
 
 export interface LocalFile {
@@ -306,7 +306,7 @@ export default function FilesMode() {
       {error && <div className="banner err">{error}</div>}
       {batchSummary && <div className="banner ok">{batchSummary}</div>}
       {files.length === 0 ? (
-        <FileDropZone onFiles={addFiles} busy={busy} />
+        <Landing onFiles={addFiles} busy={busy} />
       ) : (
         <FileList
           files={files}

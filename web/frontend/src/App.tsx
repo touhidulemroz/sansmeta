@@ -32,7 +32,7 @@ export default function App() {
       </header>
       <main>{mode === 'files' ? <FilesMode /> : <TextMode />}</main>
       <footer className="footer">
-        Files stay on this machine — the cleaning engine runs locally, no account or network needed.
+        No account, no tracking — cleaned files are kept for 1 hour, then deleted automatically.
       </footer>
     </div>
   )
