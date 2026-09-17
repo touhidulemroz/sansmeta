@@ -16,18 +16,9 @@ const TABS: { id: InfoTab; label: string }[] = [
 ]
 
 const STEPS = [
-  { title: 'Add files', text: 'Drop or browse images, documents, audio, video, or text.' },
-  { title: 'Inspect', text: 'See every hidden mark the engine finds — nothing changes yet.' },
-  { title: 'Clean & download', text: 'Grab each cleaned copy, or the whole batch as a zip.' },
-]
-
-const FEATURES = [
-  { title: 'Inspect first', text: 'Preview hidden marks before anything is touched.' },
-  { title: 'Safe copies only', text: 'Originals are never modified.' },
-  { title: 'Never overwrites', text: 'Existing exports get -2, -3 suffixes.' },
-  { title: 'Metadata control', text: 'Keep normal metadata, or strip more.' },
-  { title: 'Text mode', text: 'Paste text and strip invisible marks instantly.' },
-  { title: 'Private', text: 'No account. Files deleted after one hour.' },
+  { n: '01', title: 'Add files', text: 'Drop or browse images, documents, audio, video, or text.' },
+  { n: '02', title: 'Inspect', text: 'See every hidden mark the engine finds — nothing changes yet.' },
+  { n: '03', title: 'Clean & download', text: 'Grab each cleaned copy, or the whole batch as a zip.' },
 ]
 
 const FORMAT_GROUPS = [
@@ -96,26 +87,17 @@ export default function Landing({ onFiles, busy }: Props) {
 
         <div className="info-panel">
           {tab === 'how' && (
-            <div className="how-panel">
-              <ol className="steps-list">
-                {STEPS.map((step) => (
-                  <li key={step.title}>
-                    <div>
-                      <h4>{step.title}</h4>
-                      <p>{step.text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              <dl className="feature-list">
-                {FEATURES.map((feature) => (
-                  <div key={feature.title}>
-                    <dt>{feature.title}</dt>
-                    <dd>{feature.text}</dd>
+            <ol className="steps-list">
+              {STEPS.map((step) => (
+                <li key={step.n}>
+                  <span className="step-num">{step.n}</span>
+                  <div>
+                    <h4>{step.title}</h4>
+                    <p>{step.text}</p>
                   </div>
-                ))}
-              </dl>
-            </div>
+                </li>
+              ))}
+            </ol>
           )}
 
           {tab === 'formats' && (

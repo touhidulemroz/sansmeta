@@ -502,29 +502,38 @@ body {
 
 /* How it works */
 
-.how-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 36px;
-}
-
 .steps-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .steps-list li {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 22px 0;
+  border-top: 1px solid var(--border);
+}
+
+.steps-list li:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.step-num {
+  flex-shrink: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  padding-top: 2px;
 }
 
 .steps-list h4 {
-  margin: 0;
+  margin: 0 0 3px;
   font-size: 15.5px;
   font-weight: 700;
 }
@@ -534,31 +543,6 @@ body {
   color: var(--text-2);
   font-size: 13.5px;
   line-height: 1.55;
-}
-
-.feature-list {
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 28px;
-}
-
-.feature-list > div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.feature-list dt {
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.feature-list dd {
-  margin: 0;
-  color: var(--text-2);
-  font-size: 13px;
-  line-height: 1.5;
 }
 
 /* Formats */
