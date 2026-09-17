@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: watermarks-cleaner
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: WEB_MAX_FILE_BYTES
+        value: 104857600
