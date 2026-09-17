@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleExecutable</key><string>WatermarksCleaner</string>
+<key>CFBundleIdentifier</key><string>local.watermarks.cleaner</string>
+<key>CFBundleName</key><string>Watermarks Cleaner</string>
+<key>CFBundleIconFile</key><string>AppIcon.icns</string>
+<key>CFBundleDisplayName</key><string>Watermarks Cleaner</string>
+<key>CFBundleVersion</key><string>2</string>
+<key>CFBundleShortVersionString</key><string>1.0.1</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>LSMinimumSystemVersion</key><string>13.0</string>
+<key>NSHighResolutionCapable</key><true/>
+<key>NSHumanReadableCopyright</key><string>Uses watermarks-remover by Guillaume Meyer, MIT license.</string>
+</dict></plist>
