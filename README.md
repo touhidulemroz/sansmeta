@@ -40,14 +40,48 @@ app/                    SwiftUI interface + local adapter
   bridge.py               JSON-over-stdio adapter to the engine
   Assets/, Info.plist     Icon and bundle metadata
 scripts/build.sh        Builds dist/Watermarks Cleaner.app (ad-hoc signed)
+scripts/web-dev.sh      Runs the web backend + frontend dev servers
 tests/test_app.py       Integration tests (stdlib unittest)
 upstream/               Pinned, unmodified cleaning engine (vendored)
   service/scripts/        The upstream cleaners
   tests/fixtures/         Samples used by the integration tests
   LICENSE                 Upstream MIT license
+web/                    Browser version (FastAPI backend + React frontend)
+  backend/                Reuses app/bridge.py as a subprocess, unchanged
+  frontend/               Vite + React + TypeScript UI
+  Dockerfile              Single deployable service (serves the built UI)
 ```
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design, and [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and the upstream-update procedure.
+
+## Web version
+
+The same cleaning engine is available in the browser — the Mac app is untouched; the web backend calls the same `app/bridge.py` adapter the SwiftUI app uses.
+
+- Same features as the Mac app: batch inspect/clean, metadata toggle, per-file reports, download `.cleaned` copies (individually or as a zip), and text mode.
+- Local-first: files stay on the machine running the server; no accounts or external services.
+- One deployable service: the FastAPI backend serves the built React UI, so you can run it on a VPS (Dockerfile included) or just on your own machine.
+
+Quick start (see [web/README.md](web/README.md) for details):
+
+```sh
+cd web/backend && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+cd ../frontend && npm install
+bash scripts/web-dev.sh   # open http://localhost:5173
+```
+
+Production build and run:
+
+```sh
+cd web/frontend && npm run build
+cd ../backend && .venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000   # open http://localhost:8000
+```
+
+Docker:
+
+```sh
+docker build -t watermarks-cleaner-web . && docker run -p 8000:8000 watermarks-cleaner-web
+```
 
 ## Build and verify
 

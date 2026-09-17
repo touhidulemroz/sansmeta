@@ -1,11 +1,13 @@
+.git/
+.gitignore
 .build/
 dist/
-__pycache__/
-*.pyc
-.DS_Store
 .commandcode/
 upstream/.git-backup/
+__pycache__/
+*.pyc
+.pytest_cache/
 web/backend/.venv/
+web/backend/tests/
 web/frontend/node_modules/
 web/frontend/dist/
-.pytest_cache/
