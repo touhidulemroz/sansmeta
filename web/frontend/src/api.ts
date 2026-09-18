@@ -44,8 +44,31 @@ export interface AppConfig {
   maxTextBytes: number
 }
 
+export type BackendWakeState = 'idle' | 'checking' | 'waking' | 'ready' | 'offline'
+
+export interface BackendStatusEvent {
+  state: BackendWakeState
+  elapsedSeconds: number
+  message?: string
+}
+
 export const MAX_BATCH_FILES = 50
 export const MAX_FILE_MB = 256
+
+export const API_BASE_URL: string = (
+  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) || ''
+).replace(/\/+$/, '')
+
+/**
+ * Resolves an API path against the configured base URL if specified.
+ * If path is already an absolute HTTP(S) URL, it is returned untouched.
+ */
+export function resolveApiUrl(path: string): string {
+  if (!path) return path
+  if (/^https?:\/\//i.test(path)) return path
+  const cleanPath = path.startsWith('/') ? path : `/${path}`
+  return `${API_BASE_URL}${cleanPath}`
+}
 
 export class ApiError extends Error {
   status: number
@@ -59,6 +82,85 @@ export class ApiError extends Error {
 export interface UploadHandle<T> {
   promise: Promise<T>
   abort: () => void
+}
+
+let cachedReady = false
+
+/**
+ * Ping backend health with a timeout.
+ */
+export async function checkBackendHealth(timeoutMs = 3000): Promise<boolean> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const response = await fetch(resolveApiUrl('/api/health'), {
+      signal: controller.signal,
+      cache: 'no-store',
+    })
+    clearTimeout(timer)
+    if (!response.ok) return false
+    const data = (await response.json()) as { ok?: boolean }
+    const isOk = data.ok === true
+    if (isOk) cachedReady = true
+    return isOk
+  } catch {
+    clearTimeout(timer)
+    return false
+  }
+}
+
+/**
+ * Ensures backend is awake. If already ready, returns immediately.
+ * Otherwise, transitions to 'checking' -> 'waking' and polls until ready
+ * or maxTimeoutMs (default 75s) expires.
+ */
+export async function ensureBackendAwake(
+  onProgress?: (event: BackendStatusEvent) => void,
+  maxTimeoutMs = 75000,
+): Promise<boolean> {
+  if (cachedReady) {
+    onProgress?.({ state: 'ready', elapsedSeconds: 0, message: 'Backend engine ready.' })
+    return true
+  }
+
+  const startTime = Date.now()
+  onProgress?.({ state: 'checking', elapsedSeconds: 0, message: 'Connecting to processing engine...' })
+
+  const quickPing = await checkBackendHealth(2500)
+  if (quickPing) {
+    onProgress?.({ state: 'ready', elapsedSeconds: 0, message: 'Backend engine ready.' })
+    return true
+  }
+
+  // Cold start detected on free instance
+  onProgress?.({
+    state: 'waking',
+    elapsedSeconds: 0,
+    message: 'Secure processing engine is waking up. This may take up to a minute after inactivity.',
+  })
+
+  while (Date.now() - startTime < maxTimeoutMs) {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    const elapsed = Math.round((Date.now() - startTime) / 1000)
+    onProgress?.({
+      state: 'waking',
+      elapsedSeconds: elapsed,
+      message: 'Secure processing engine is waking up. This may take up to a minute after inactivity.',
+    })
+
+    const isAwake = await checkBackendHealth(2500)
+    if (isAwake) {
+      onProgress?.({ state: 'ready', elapsedSeconds: elapsed, message: 'Backend engine ready.' })
+      return true
+    }
+  }
+
+  onProgress?.({
+    state: 'offline',
+    elapsedSeconds: Math.round((Date.now() - startTime) / 1000),
+    message: 'Server took too long to respond. Please try again.',
+  })
+  return false
 }
 
 async function json<T>(response: Response): Promise<T> {
@@ -82,7 +184,7 @@ function upload<T>(
   onProgress?: (loaded: number, total: number) => void,
 ): UploadHandle<T> {
   const xhr = new XMLHttpRequest()
-  xhr.open('POST', url)
+  xhr.open('POST', resolveApiUrl(url))
   xhr.upload.onprogress = (event) => {
     if (event.lengthComputable && onProgress) onProgress(event.loaded, event.total)
   }
@@ -137,18 +239,22 @@ export function startClean(
 }
 
 export async function jobStatus(statusUrl: string): Promise<JobStatus> {
-  return json(await fetch(statusUrl))
+  return json(await fetch(resolveApiUrl(statusUrl)))
 }
 
 /** Cancel a job's processing without deleting its files yet. */
 export async function cancelJob(jobId: string, jobToken: string): Promise<void> {
-  const response = await fetch(`/api/jobs/${jobId}/cancel?token=${encodeURIComponent(jobToken)}`, { method: 'POST' })
+  const response = await fetch(resolveApiUrl(`/api/jobs/${jobId}/cancel?token=${encodeURIComponent(jobToken)}`), {
+    method: 'POST',
+  })
   if (!response.ok) throw new ApiError(response.status, 'Could not cancel the job.')
 }
 
 /** Immediately purge a job and delete all of its temporary files. */
 export async function deleteJob(jobId: string, jobToken: string): Promise<boolean> {
-  const response = await fetch(`/api/jobs/${jobId}?token=${encodeURIComponent(jobToken)}`, { method: 'DELETE' })
+  const response = await fetch(resolveApiUrl(`/api/jobs/${jobId}?token=${encodeURIComponent(jobToken)}`), {
+    method: 'DELETE',
+  })
   if (!response.ok) throw new ApiError(response.status, 'Could not delete the files.')
   return ((await response.json()) as { deleted?: boolean }).deleted === true
 }
@@ -159,7 +265,7 @@ export async function deleteJob(jobId: string, jobToken: string): Promise<boolea
  */
 export function requestCleanup(jobId: string, jobToken: string): void {
   if (typeof window === 'undefined' || !jobId || !jobToken) return
-  const url = `/api/jobs/${jobId}/cleanup?token=${encodeURIComponent(jobToken)}`
+  const url = resolveApiUrl(`/api/jobs/${jobId}/cleanup?token=${encodeURIComponent(jobToken)}`)
   try {
     if (navigator.sendBeacon) {
       navigator.sendBeacon(url)
@@ -172,13 +278,13 @@ export function requestCleanup(jobId: string, jobToken: string): void {
 }
 
 export async function fetchConfig(): Promise<AppConfig> {
-  const response = await fetch('/api/config')
+  const response = await fetch(resolveApiUrl('/api/config'))
   return json<AppConfig>(response)
 }
 
 export async function cleanText(text: string): Promise<TextResult> {
   return json(
-    await fetch('/api/text', {
+    await fetch(resolveApiUrl('/api/text'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
@@ -187,11 +293,12 @@ export async function cleanText(text: string): Promise<TextResult> {
 }
 
 export async function download(url: string): Promise<void> {
-  const response = await fetch(url)
+  const response = await fetch(resolveApiUrl(url))
   if (!response.ok) {
-    const message = response.status === 404
-      ? 'These files have expired or already been deleted.'
-      : `Download failed (${response.status})`
+    const message =
+      response.status === 404
+        ? 'These files have expired or already been deleted.'
+        : `Download failed (${response.status})`
     throw new ApiError(response.status, message)
   }
   const blob = await response.blob()
