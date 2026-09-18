@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: watermarks-cleaner
+    name: sansmeta
     runtime: docker
     plan: free
     healthCheckPath: /api/health
@@ -12,6 +12,6 @@ services:
       - key: WEB_JOB_TTL_SECONDS
         value: 900
       # Public origin for canonical URLs, social metadata, and sitemap.xml.
-      # No trailing slash, e.g. https://your-service.onrender.com
+      # No trailing slash, e.g. https://sansmeta.onrender.com
       - key: WEB_PUBLIC_ORIGIN
         value: ""
