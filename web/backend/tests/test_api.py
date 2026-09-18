@@ -384,7 +384,7 @@ def test_home_serves_brand_and_prerendered_content(client):
 
 def test_home_omits_absolute_seo_tags_without_origin(client):
     response = client.get("/")
-    assert "rel=\"canonical\"" not in response.text
+    assert 'rel="canonical"' not in response.text
     assert 'property="og:image"' not in response.text
     assert '"url": "/"' in response.text
 
@@ -454,3 +454,56 @@ def test_missing_api_route_keeps_json_404(client):
     response = client.get("/api/definitely-not-here")
     assert response.status_code == 404
     assert response.headers["content-type"].startswith("application/json")
+
+
+def test_cors_default_wildcard_on_api(client, monkeypatch):
+    monkeypatch.delenv("WEB_CORS_ORIGINS", raising=False)
+    response = client.get("/api/health", headers={"Origin": "https://sansmeta-web.onrender.com"})
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "*"
+    expose = response.headers.get("access-control-expose-headers", "").lower()
+    assert "content-disposition" in expose
+    assert "content-length" in expose
+
+
+def test_cors_preflight_options_request(client, monkeypatch):
+    monkeypatch.delenv("WEB_CORS_ORIGINS", raising=False)
+    response = client.options(
+        "/api/clean",
+        headers={
+            "Origin": "https://sansmeta-web.onrender.com",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "Content-Type",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "*"
+    assert "POST" in response.headers.get("access-control-allow-methods", "")
+
+
+def test_cors_configured_allowed_origins(client, monkeypatch):
+    monkeypatch.setenv("WEB_CORS_ORIGINS", "https://sansmeta-web.onrender.com,https://sansmeta.com")
+    allowed_resp = client.get("/api/health", headers={"Origin": "https://sansmeta-web.onrender.com"})
+    assert allowed_resp.status_code == 200
+    assert allowed_resp.headers.get("access-control-allow-origin") == "https://sansmeta-web.onrender.com"
+    assert "Origin" in allowed_resp.headers.get("vary", "")
+
+    second_allowed = client.get("/api/health", headers={"Origin": "https://sansmeta.com"})
+    assert second_allowed.status_code == 200
+    assert second_allowed.headers.get("access-control-allow-origin") == "https://sansmeta.com"
+
+    disallowed_resp = client.get("/api/health", headers={"Origin": "https://unauthorized-domain.com"})
+    assert disallowed_resp.status_code == 200
+    assert "access-control-allow-origin" not in disallowed_resp.headers
+
+
+def test_cors_headers_on_job_deletion_and_cleanup(client, monkeypatch):
+    monkeypatch.setenv("WEB_CORS_ORIGINS", "https://sansmeta-web.onrender.com")
+    origin = "https://sansmeta-web.onrender.com"
+    response = client.delete("/api/jobs/unknown-job", headers={"Origin": origin})
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == origin
+
+    cleanup_resp = client.post("/api/jobs/unknown-job/cleanup", headers={"Origin": origin})
+    assert cleanup_resp.status_code == 200
+    assert cleanup_resp.headers.get("access-control-allow-origin") == origin
