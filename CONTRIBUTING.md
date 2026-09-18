@@ -68,18 +68,6 @@ Run the engine integration test suite from the repository root:
 python3 -m unittest discover -s tests -v
 ```
 
-### 4. macOS Native App (Optional)
-
-Requirements:
-- Apple Silicon Mac
-- Xcode Command Line Tools (`xcode-select --install`)
-- Python 3.10+
-
-Build the native macOS app:
-```bash
-bash scripts/build.sh
-```
-The output bundle will be located at `dist/Watermarks Cleaner.app`.
 
 ---
 

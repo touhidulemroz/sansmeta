@@ -1,11 +1,11 @@
-"""JSON-over-stdio client for the unchanged Mac app adapter (app/bridge.py)."""
+"""JSON-over-stdio client for the unchanged engine adapter (engine/bridge.py)."""
 import json
 import subprocess
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-BRIDGE = REPO_ROOT / "app" / "bridge.py"
+BRIDGE = REPO_ROOT / "engine" / "bridge.py"
 PER_FILE_TIMEOUT_SECONDS = 200.0
 
 

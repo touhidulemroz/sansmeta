@@ -1,6 +1,6 @@
 # SansMeta — Website
 
-Browser version of the cleaning engine, branded **SansMeta** ("Remove Hidden AI Metadata Online for Free"). The FastAPI backend calls the unchanged `app/bridge.py` adapter (same JSON-over-stdio protocol the SwiftUI app uses), which drives the vendored cleaning engine in `upstream/service/scripts/`. Files and pasted text are processed on the machine running the server.
+Browser version of the cleaning engine, branded **SansMeta** ("Remove Hidden AI Metadata Online for Free"). The FastAPI backend calls the unchanged `engine/bridge.py` adapter (same JSON-over-stdio protocol the SwiftUI app uses), which drives the vendored cleaning engine in `upstream/service/scripts/`. Files and pasted text are processed on the machine running the server.
 
 ## Layout
 
@@ -177,4 +177,4 @@ Notes for the free plan:
 
 ## Relationship to the Mac app
 
-`app/`, `upstream/`, `tests/`, and `scripts/build.sh` are frozen: the web backend never modifies them, only invokes `app/bridge.py` read-only. Both apps can run side by side; the engine is stateless per invocation and export naming is collision-safe across processes. The Mac app keeps its own name and identity; aligning it with the SansMeta brand is tracked as deferred future work.
+`app/`, `upstream/`, `tests/`, and `scripts/build.sh` are frozen: the web backend never modifies them, only invokes `engine/bridge.py` read-only. Both apps can run side by side; the engine is stateless per invocation and export naming is collision-safe across processes. The Mac app keeps its own name and identity; aligning it with the SansMeta brand is tracked as deferred future work.
