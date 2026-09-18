@@ -136,7 +136,7 @@ export default function App() {
         {mode === 'files' ? (
           <FilesMode onUseText={() => setMode('text')} config={config} />
         ) : (
-          <TextMode />
+          <TextMode config={config} />
         )}
       </main>
       <footer className="site-footer">
