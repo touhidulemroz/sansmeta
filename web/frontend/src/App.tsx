@@ -11,6 +11,7 @@ type Mode = 'files' | 'text'
 const NAV = [
   { href: '#how-it-works', label: 'How it works' },
   { href: '#formats', label: 'Formats' },
+  { href: '#mac-app', label: 'Mac App (Pro)' },
   { href: '#privacy', label: 'Privacy' },
   { href: '#faq', label: 'FAQ' },
 ]
@@ -167,6 +168,7 @@ export default function App() {
               <ul className="footer-nav-list">
                 <li><a href="#how-it-works">How it works</a></li>
                 <li><a href="#formats">Supported formats</a></li>
+                <li><a href="#mac-app">SansMeta for Mac (Pro)</a></li>
                 <li><a href="#privacy">Privacy overview</a></li>
                 <li><a href="#faq">FAQ</a></li>
               </ul>
