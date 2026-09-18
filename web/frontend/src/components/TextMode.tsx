@@ -1,9 +1,26 @@
 import { useState } from 'react'
-import { ApiError, cleanText, ensureBackendAwake } from '../api'
+import { ApiError, cleanText, ensureBackendAwake, type AppConfig } from '../api'
 import { trackEvent } from '../analytics'
-import { AlertIcon, CheckIcon, CopyIcon, ResetIcon } from './Icons'
+import {
+  AlertIcon,
+  ArrowRightIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  ClockIcon,
+  CopyIcon,
+  LockIcon,
+  MinusCircleIcon,
+  ResetIcon,
+  ShieldIcon,
+} from './Icons'
 
-export default function TextMode() {
+interface Props {
+  config?: AppConfig | null
+  onUseFiles?: () => void
+}
+
+export default function TextMode({ config, onUseFiles }: Props = {}) {
+  const fallbackMinutes = Math.max(1, Math.round((config?.jobTtlSeconds ?? 900) / 60))
   const [source, setSource] = useState('')
   const [output, setOutput] = useState('')
   const [stats, setStats] = useState<{ removed: number; replaced: number } | null>(null)
@@ -92,18 +109,48 @@ export default function TextMode() {
           </div>
         </div>
 
+        <div className="text-column-connector" aria-hidden="true">
+          <div className="connector-line" />
+          <span className="connector-circle">
+            <ArrowRightIcon size={15} />
+          </span>
+          <div className="connector-line" />
+        </div>
+
         <div className="pane">
           <div className="pane-head">
             <label htmlFor="text-result">Cleaned text</label>
-            <span className="stats" aria-live="polite">
-              {stats && (
-                <>
-                  <span className="chip clean">{stats.removed} removed</span>
-                  <span className="chip clean">{stats.replaced} replaced</span>
-                </>
-              )}
-            </span>
+            <span className="count">{output.length.toLocaleString()} characters</span>
           </div>
+
+          {stats && (
+            <div
+              className={`pane-status-bar ${stats.removed > 0 || stats.replaced > 0 ? 'success' : 'neutral'}`}
+              role="status"
+              aria-live="polite"
+            >
+              {stats.removed > 0 || stats.replaced > 0 ? (
+                <span className="status-badge success">
+                  <CheckCircleIcon size={14} />
+                  <span>
+                    {(() => {
+                      const total = stats.removed + stats.replaced
+                      if (stats.removed > 0 && stats.replaced > 0) {
+                        return `${stats.removed} removed, ${stats.replaced} replaced`
+                      }
+                      return `${total} invisible ${total === 1 ? "character" : "characters"} removed`
+                    })()}
+                  </span>
+                </span>
+              ) : (
+                <span className="status-badge neutral">
+                  <MinusCircleIcon size={14} />
+                  <span>No hidden characters found</span>
+                </span>
+              )}
+            </div>
+          )}
+
           <textarea
             id="text-result"
             value={output}
@@ -140,6 +187,63 @@ export default function TextMode() {
           Result copied to clipboard.
         </div>
       )}
+
+      {onUseFiles && (
+        <button type="button" className="text-mode-link" onClick={onUseFiles}>
+          Prefer files? Clean AI watermarks &amp; metadata from files instead
+        </button>
+      )}
+
+      {/* Consistent Trust Signals across modes */}
+      <div className="hero-trust-bar text-trust-bar">
+        <span className="trust-pill">
+          <LockIcon size={13} /> No account
+        </span>
+        <span className="trust-pill">
+          <ShieldIcon size={13} /> Originals untouched
+        </span>
+        <span className="trust-pill">
+          <ClockIcon size={13} /> Auto-purged in {fallbackMinutes}m
+        </span>
+        <span className="trust-sep">&middot;</span>
+        <span className="trust-meta">Zero storage &middot; Ephemeral processing</span>
+      </div>
+
+      {/* Mini-explainer: What gets cleaned from your text */}
+      <section className="text-explainer" aria-labelledby="text-explainer-heading">
+        <h2 id="text-explainer-heading" className="text-explainer-title">
+          What gets cleaned from your text
+        </h2>
+        <div className="text-explainer-grid">
+          <div className="text-explainer-card">
+            <div className="explainer-card-icon" aria-hidden="true">
+              <CheckCircleIcon size={18} />
+            </div>
+            <h3>Zero-Width Spaces &amp; Joiners</h3>
+            <p>
+              Strips U+200B (ZWSP), U+200C (ZWNJ), U+200D (ZWJ), and U+FEFF (BOM) frequently injected as invisible steganographic tracking fingerprints.
+            </p>
+          </div>
+          <div className="text-explainer-card">
+            <div className="explainer-card-icon" aria-hidden="true">
+              <CheckCircleIcon size={18} />
+            </div>
+            <h3>BiDi &amp; Directional Overrides</h3>
+            <p>
+              Removes Right-to-Left / Left-to-Right embedding and isolate marks (Trojan Source) that disguise text structure or spoof executable strings.
+            </p>
+          </div>
+          <div className="text-explainer-card">
+            <div className="explainer-card-icon" aria-hidden="true">
+              <CheckCircleIcon size={18} />
+            </div>
+            <h3>Invisible Controls &amp; Tags</h3>
+            <p>
+              Purges soft hyphens (U+00AD), Unicode tag characters (U+E0000+), word joiners, and hidden variation selectors while preserving visible words.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
