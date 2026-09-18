@@ -1,13 +1,40 @@
+# Build and distributions
 .build/
 dist/
+*.egg-info/
+
+# Python cache & test artifacts
 __pycache__/
 *.pyc
-.DS_Store
-.commandcode/
-upstream/.git-backup/
-web/backend/.venv/
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Frontend
 web/frontend/node_modules/
 web/frontend/dist/
-.pytest_cache/
+
+# Virtual environments
+web/backend/.venv/
+.venv/
+env/
+venv/
+
+# Environment variables & secrets
 .env
+.env.*
+!.env.example
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+.commandcode/
+upstream/.git-backup/
 Codex Image*.png
