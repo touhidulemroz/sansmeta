@@ -548,13 +548,15 @@ body {
 }
 
 .copyright-safety-notice {
-  margin-top: 4px;
-  max-width: 680px;
-  padding: 10px 16px;
+  margin-top: -6px;
+  max-width: 780px;
+  width: 100%;
+  padding: 11px 20px;
   background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.28);
   border-radius: var(--radius-md);
   text-align: center;
+  box-sizing: border-box;
 }
 
 .copyright-safety-notice p {

@@ -182,6 +182,13 @@ export default function Landing({
                 <span className="hero-drop-btn">Choose files</span>
               </div>
             </FileDropZone>
+
+            <div className="copyright-safety-notice">
+              <p>
+                Use this tool only with files and images you own, created yourself, or are authorized to edit. You are responsible for ensuring watermark and metadata removal complies with copyright and applicable laws.
+              </p>
+            </div>
+
             <button className="text-mode-link" onClick={onUseText}>
               Prefer text? Clean invisible characters from pasted text instead
             </button>
@@ -192,12 +199,6 @@ export default function Landing({
               <span className="trust-pill"><ClockIcon size={13} /> Auto-purged in {fallbackMinutes}m</span>
               <span className="trust-sep">·</span>
               <span className="trust-meta">Up to {MAX_BATCH_FILES} files ({MAX_FILE_MB}MB ea)</span>
-            </div>
-
-            <div className="copyright-safety-notice">
-              <p>
-                Use this tool only with files and images you own, created yourself, or are authorized to edit. You are responsible for ensuring watermark and metadata removal complies with copyright and applicable laws.
-              </p>
             </div>
           </>
         )}
