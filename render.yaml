@@ -7,3 +7,11 @@ services:
     envVars:
       - key: WEB_MAX_FILE_BYTES
         value: 104857600
+      # Fallback expiry for temporary files (seconds). Files are deleted sooner after a
+      # completed download, on "clear", on a new batch, or when the page is closed/hidden.
+      - key: WEB_JOB_TTL_SECONDS
+        value: 900
+      # Public origin for canonical URLs, social metadata, and sitemap.xml.
+      # No trailing slash, e.g. https://your-service.onrender.com
+      - key: WEB_PUBLIC_ORIGIN
+        value: ""

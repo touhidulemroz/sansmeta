@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#faf9f7" />
+    <title>Privacy — SansMeta</title>
+    <meta
+      name="description"
+      content="How SansMeta handles your files and pasted text: server-side processing, temporary storage, automatic deletion, download links, limits, and optional analytics."
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+    </script>
+  </head>
+  <body>
+    <div class="shell static-page">
+      <a class="skip-link" href="#main-content">Skip to content</a>
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="SansMeta home">
+          <img class="logo" src="/logo-mark.png" alt="SansMeta logo" width="34" height="48" />
+          <span class="brand-text">
+            <span class="brand-name">SansMeta</span>
+            <span class="brand-note">Remove hidden AI metadata, online</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="/#how-it-works">How it works</a></li>
+            <li><a href="/#formats">Formats</a></li>
+            <li><a href="/#privacy">Privacy</a></li>
+            <li><a href="/#faq">FAQ</a></li>
+          </ul>
+        </nav>
+      </header>
+      <main class="main-content static-content" id="main-content">
+        <h1>Privacy</h1>
+        <p class="static-lede">
+          SansMeta is a free online utility for inspecting and cleaning hidden AI metadata
+          and invisible Unicode characters. This page describes exactly how files and text
+          are handled, so you can decide what to process.
+        </p>
+
+        <section aria-labelledby="processing">
+          <h2 id="processing">Where processing happens</h2>
+          <p>
+            SansMeta processes files and pasted text <strong>on the server</strong>, not in
+            your browser. When you upload a file or submit text, the content is sent over
+            the network to the server running the cleaning engine. The site does not
+            describe this as offline, browser-local, or zero-upload processing.
+          </p>
+        </section>
+
+        <section aria-labelledby="collection">
+          <h2 id="collection">What the service receives</h2>
+          <ul>
+            <li>Files you choose to inspect or clean.</li>
+            <li>Text you paste into the text tool.</li>
+            <li>Your choice of the &ldquo;keep non-AI metadata&rdquo; option.</li>
+          </ul>
+          <p>
+            No account is required, and the service does not ask for a name, email address,
+            or other identifying information.
+          </p>
+        </section>
+
+        <section aria-labelledby="limits">
+          <h2 id="limits">Upload and text limits</h2>
+          <p>Default limits, which the operator may lower or raise per deployment:</p>
+          <ul>
+            <li>Up to 50 files per batch.</li>
+            <li>Up to 256 MB per file.</li>
+            <li>Up to 8 MB of text per paste.</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="storage">
+          <h2 id="storage">Storage and retention</h2>
+          <p>
+            Uploads and cleaned copies are written to temporary job workspaces on the
+            server's filesystem. They are <strong>deleted in any of these cases</strong>:
+          </p>
+          <ul>
+            <li>after a completed download (the ZIP download removes the job once the
+              response finishes),</li>
+            <li>when you start over or choose &ldquo;Clear &amp; delete files&rdquo;,</li>
+            <li>when you start a new batch (the previous job is purged),</li>
+            <li>or when you close or hide the page (a best-effort request).</li>
+          </ul>
+          <p>
+            A short <strong>automatic expiry of __RETENTION_MINUTES__ minutes</strong> acts as a fallback for
+            browser crashes, connection loss, interrupted downloads, or failed cleanup
+            requests. Retention is configurable by the operator. Files may also disappear
+            sooner — for example, when the hosting service restarts or redeploys, because
+            jobs are held in memory and workspaces are ephemeral by design.
+          </p>
+          <p>
+            Closing the page sends a best-effort deletion request, but a browser or network
+            interruption may prevent the server from confirming it; the configured fallback
+            covers that case.
+          </p>
+        </section>
+
+        <section aria-labelledby="downloads">
+          <h2 id="downloads">Download links</h2>
+          <p>
+            Each job has both a random identifier and a separate random access token. The
+            server requires both for status, download, cancellation, and deletion requests.
+            Anyone with the complete link can still download the file while the job exists,
+            so do not share it. An operator can optionally require an API key for all API
+            routes too. Job identifiers are never interpreted as file paths.
+          </p>
+        </section>
+
+        <section aria-labelledby="analytics">
+          <h2 id="analytics">Analytics and consent</h2>
+          <p>
+            The site uses Google Analytics to understand aggregate usage. Analytics runs
+            only after you accept the consent notice; declining means no analytics script
+            is loaded and no events are recorded. You can review or change your choice by
+            clearing this site&rsquo;s local storage, which shows the notice again.
+          </p>
+          <p>
+            Only aggregate events are sent: page views, mode switches, uploads and clean
+            completions (with file counts), downloads (by type), and text cleaning (with
+            character counts). <strong>Filenames, file contents, pasted text, and download
+            tokens are never sent to analytics.</strong>
+          </p>
+        </section>
+
+        <section aria-labelledby="third-parties">
+          <h2 id="third-parties">Third parties</h2>
+          <p>
+            With consent granted, the only third-party request is Google Analytics. No
+            other third-party scripts, ads, or trackers are loaded.
+          </p>
+        </section>
+
+        <section aria-labelledby="not-collected">
+          <h2 id="not-collected">What SansMeta does not do</h2>
+          <ul>
+            <li>It does not modify your original files — cleaned copies are separate downloads.</li>
+            <li>It does not use your files or text to train models.</li>
+            <li>It does not claim encryption of stored workspaces or certifications.</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="changes">
+          <h2 id="changes">Changes</h2>
+          <p>
+            This privacy page is updated together with the code, so it always reflects the
+            deployed behavior.
+          </p>
+        </section>
+
+        <p class="static-cta">
+          <a class="btn primary" href="/">Back to the tool</a>
+        </p>
+      </main>
+      <footer class="site-footer">
+        <p class="footer-links">
+          <a href="/">Home</a>
+          <span aria-hidden="true">&middot;</span>
+          <a href="https://github.com/touhidulemroz/watermarks-cleaner-mac" target="_blank" rel="noreferrer">
+            Source on GitHub
+          </a>
+          <span aria-hidden="true">&middot;</span>
+          <a href="https://github.com/guillaumemeyer/watermarks-remover" target="_blank" rel="noreferrer">
+            watermarks-remover engine (MIT)
+          </a>
+        </p>
+        <p class="footer-tagline">Remove hidden AI metadata online for free.</p>
+      </footer>
+    </div>
+    <script type="module" src="/src/static.ts"></script>
+  </body>
+</html>

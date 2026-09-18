@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ApiError, cleanText } from '../api'
 import { trackEvent } from '../analytics'
-import { AlertIcon, CheckIcon, CopyIcon, ResetIcon, SparkleIcon } from './Icons'
+import { AlertIcon, CheckIcon, CopyIcon, ResetIcon } from './Icons'
 
 export default function TextMode() {
   const [source, setSource] = useState('')
@@ -58,10 +58,11 @@ export default function TextMode() {
   return (
     <div className="text-mode">
       <header className="text-head">
-        <h1>Clean hidden characters from text</h1>
+        <h1>Clean invisible characters from text</h1>
         <p>
-          Paste text to strip invisible Unicode watermark characters and see exactly how
-          many were removed or replaced.
+          Paste text to strip supported invisible Unicode characters — such as zero-width
+          spaces — and see exactly how many were removed or replaced. Your text is sent to
+          the server for processing.
         </p>
       </header>
 
@@ -75,7 +76,7 @@ export default function TextMode() {
             id="text-source"
             value={source}
             onChange={(event) => setSource(event.target.value)}
-            placeholder="Paste text that may contain hidden watermark characters…"
+            placeholder="Paste text that may contain invisible characters…"
             spellCheck={false}
           />
           <div className="pane-actions">
@@ -84,7 +85,7 @@ export default function TextMode() {
               onClick={runClean}
               disabled={busy || source.length === 0}
             >
-              <SparkleIcon size={15} />
+              <CheckIcon size={15} />
               {busy ? 'Cleaning…' : 'Clean text'}
             </button>
           </div>
