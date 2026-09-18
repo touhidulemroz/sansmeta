@@ -2,12 +2,18 @@ import type { ReactNode } from 'react'
 import FileDropZone from './FileDropZone'
 import { MAX_BATCH_FILES, MAX_FILE_MB } from '../api'
 import {
+  AudioIcon,
   CheckCircleIcon,
   ClockIcon,
+  DocIcon,
+  ImageIcon,
+  InfoIcon,
   LockIcon,
   MinusCircleIcon,
   ShieldIcon,
+  TextFileIcon,
   UploadIcon,
+  VideoIcon,
 } from './Icons'
 
 interface Props {
@@ -23,22 +29,27 @@ const FORMAT_GROUPS = [
   {
     title: 'Images',
     items: 'PNG, JPEG, WebP, AVIF, HEIC/HEIF, SVG',
+    icon: ImageIcon,
   },
   {
     title: 'Documents',
     items: 'PDF, DOCX, XLSX, PPTX, EPUB, HTML, Markdown',
+    icon: DocIcon,
   },
   {
     title: 'Audio',
     items: 'MP3, WAV, M4A, FLAC, OGG, AAC, AIFF',
+    icon: AudioIcon,
   },
   {
     title: 'Video',
     items: 'MP4, MOV, MKV, WEBM, AVI, M4V',
+    icon: VideoIcon,
   },
   {
     title: 'Text',
     items: 'TXT, JSON, CSV — plus pasted text',
+    icon: TextFileIcon,
   },
 ]
 
@@ -156,7 +167,7 @@ export default function Landing({
   return (
     <div className="landing">
       <section className="hero" aria-labelledby="hero-heading">
-        <p className="eyebrow">Remove Hidden AI Metadata Online for Free</p>
+        <p className="eyebrow"><ShieldIcon size={13} /> <span>No Sign-Up Required &middot; 100% Free &amp; Private</span></p>
         <h1 id="hero-heading">
           Inspect and clean hidden AI metadata in your files.{' '}
           <span className="hl">Online, for free.</span>
@@ -184,6 +195,9 @@ export default function Landing({
             </FileDropZone>
 
             <div className="copyright-safety-notice">
+              <span className="notice-icon" aria-hidden="true">
+                <InfoIcon size={15} />
+              </span>
               <p>
                 Use this tool only with files and images you own, created yourself, or are authorized to edit. You are responsible for ensuring watermark and metadata removal complies with copyright and applicable laws.
               </p>
@@ -204,7 +218,7 @@ export default function Landing({
         )}
       </section>
 
-      <section className="section" id="how-it-works" aria-labelledby="steps-heading">
+      <section className="section section-tint" id="how-it-works" aria-labelledby="steps-heading">
         <h2 className="section-h" id="steps-heading">
           How it works
         </h2>
@@ -232,12 +246,18 @@ export default function Landing({
           limits.
         </p>
         <ul className="format-grid">
-          {FORMAT_GROUPS.map((group) => (
-            <li key={group.title} className="format-card">
-              <h3>{group.title}</h3>
-              <p>{group.items}</p>
-            </li>
-          ))}
+          {FORMAT_GROUPS.map((group) => {
+            const Icon = group.icon
+            return (
+              <li key={group.title} className="format-card">
+                <span className="format-card-icon" aria-hidden="true">
+                  <Icon size={22} />
+                </span>
+                <h3>{group.title}</h3>
+                <p>{group.items}</p>
+              </li>
+            )
+          })}
         </ul>
         <p className="formats-note">
           Cleaning quality depends on the format and the tools installed on the server. PDFs
@@ -247,100 +267,102 @@ export default function Landing({
         </p>
       </section>
 
-      <section className="section" id="scope" aria-labelledby="scope-heading">
-        <div className="section-card">
-          <div className="section-card-header">
-            <h2 className="section-h" id="scope-heading">
-              Scope &amp; Capabilities
-            </h2>
-            <p className="section-sub">
-              Honest boundaries. SansMeta targets supported hidden marks and metadata, not visible pixels.
+      <div className="section-tint-group">
+        <section className="section section-tint" id="scope" aria-labelledby="scope-heading">
+          <div className="section-card">
+            <div className="section-card-header">
+              <h2 className="section-h" id="scope-heading">
+                Scope &amp; Capabilities
+              </h2>
+              <p className="section-sub">
+                Honest boundaries. SansMeta targets supported hidden marks and metadata, not visible pixels.
+              </p>
+            </div>
+
+            <div className="scope-grid">
+              <div className="scope-col handles">
+                <h3>
+                  <CheckCircleIcon size={17} />
+                  Supported &amp; Cleaned
+                </h3>
+                <ul>
+                  {HANDLES.map((item) => (
+                    <li key={item}>
+                      <CheckCircleIcon size={16} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="scope-col skips">
+                <h3>
+                  <MinusCircleIcon size={17} />
+                  Out of Scope
+                </h3>
+                <ul>
+                  {DOES_NOT.map((item) => (
+                    <li key={item}>
+                      <MinusCircleIcon size={16} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <details className="terminology-accordion">
+              <summary>
+                <span>Learn the technical difference: Metadata vs. Watermarks</span>
+              </summary>
+              <div className="terminology-content">
+                <dl className="terms-list">
+                  {TERMS.map((item) => (
+                    <div key={item.term} className="term-item">
+                      <dt>{item.term}</dt>
+                      <dd>{item.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section className="section section-tint" id="privacy" aria-labelledby="privacy-heading">
+          <div className="section-card">
+            <div className="section-card-header">
+              <h2 className="section-h" id="privacy-heading">
+                Privacy &amp; Ephemeral Lifecycle
+              </h2>
+              <p className="section-sub">
+                Your files exist only as long as needed to inspect and clean them. No accounts, no persistent tracking.
+              </p>
+            </div>
+
+            <div className="privacy-card-grid">
+              <div className="privacy-mini-card">
+                <span className="privacy-mini-icon"><ShieldIcon size={28} /></span>
+                <h4>Server Processing</h4>
+                <p>Files are securely processed server-side with zero permanent retention. Originals remain untouched.</p>
+              </div>
+              <div className="privacy-mini-card">
+                <span className="privacy-mini-icon"><LockIcon size={28} /></span>
+                <h4>No Accounts</h4>
+                <p>No registration, passwords, or cookies required. Access via one-time secure job tokens.</p>
+              </div>
+              <div className="privacy-mini-card">
+                <span className="privacy-mini-icon"><ClockIcon size={28} /></span>
+                <h4>Auto-Purge ({fallbackMinutes}m)</h4>
+                <p>Deleted immediately upon download or when the session closes; hard-expired within {fallbackMinutes}m.</p>
+              </div>
+            </div>
+
+            <p className="section-cta">
+              <a href="/privacy/">Read our comprehensive Privacy Policy &rarr;</a>
             </p>
           </div>
-
-          <div className="scope-grid">
-            <div className="scope-col handles">
-              <h3>
-                <CheckCircleIcon size={17} />
-                Supported &amp; Cleaned
-              </h3>
-              <ul>
-                {HANDLES.map((item) => (
-                  <li key={item}>
-                    <CheckCircleIcon size={16} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="scope-col skips">
-              <h3>
-                <MinusCircleIcon size={17} />
-                Out of Scope
-              </h3>
-              <ul>
-                {DOES_NOT.map((item) => (
-                  <li key={item}>
-                    <MinusCircleIcon size={16} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <details className="terminology-accordion">
-            <summary>
-              <span>Learn the technical difference: Metadata vs. Watermarks</span>
-            </summary>
-            <div className="terminology-content">
-              <dl className="terms-list">
-                {TERMS.map((item) => (
-                  <div key={item.term} className="term-item">
-                    <dt>{item.term}</dt>
-                    <dd>{item.text}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <section className="section" id="privacy" aria-labelledby="privacy-heading">
-        <div className="section-card">
-          <div className="section-card-header">
-            <h2 className="section-h" id="privacy-heading">
-              Privacy &amp; Ephemeral Lifecycle
-            </h2>
-            <p className="section-sub">
-              Your files exist only as long as needed to inspect and clean them. No accounts, no persistent tracking.
-            </p>
-          </div>
-
-          <div className="privacy-card-grid">
-            <div className="privacy-mini-card">
-              <span className="privacy-mini-icon"><ShieldIcon size={18} /></span>
-              <h4>Server Processing</h4>
-              <p>Files are securely processed server-side with zero permanent retention. Originals remain untouched.</p>
-            </div>
-            <div className="privacy-mini-card">
-              <span className="privacy-mini-icon"><LockIcon size={18} /></span>
-              <h4>No Accounts</h4>
-              <p>No registration, passwords, or cookies required. Access via one-time secure job tokens.</p>
-            </div>
-            <div className="privacy-mini-card">
-              <span className="privacy-mini-icon"><ClockIcon size={18} /></span>
-              <h4>Auto-Purge ({fallbackMinutes}m)</h4>
-              <p>Deleted immediately upon download or when the session closes; hard-expired within {fallbackMinutes}m.</p>
-            </div>
-          </div>
-
-          <p className="section-cta">
-            <a href="/privacy/">Read our comprehensive Privacy Policy &rarr;</a>
-          </p>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <section className="section" id="faq" aria-labelledby="faq-heading">
         <h2 className="section-h" id="faq-heading">

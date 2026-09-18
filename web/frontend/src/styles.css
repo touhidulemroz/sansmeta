@@ -4,12 +4,14 @@
   color-scheme: light;
 
   --bg: #faf9f7;
+  --bg-tint: #f4f3ff;
+  --bg-tint-border: rgba(79, 70, 229, 0.07);
   --surface: #ffffff;
   --surface-2: #f4f3f0;
 
   --text: #191c26;
-  --text-2: #545a6d;
-  --text-3: #6e7284;
+  --text-2: #3f4452; /* WCAG AAA darkened secondary text */
+  --text-3: #5c6275; /* WCAG AA darkened tertiary text */
 
   --accent: #4f46e5;
   --accent-hover: #4338ca;
@@ -59,7 +61,13 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
 body {
+  overflow-x: hidden;
   margin: 0;
   min-height: 100vh;
   background: var(--bg);
@@ -393,6 +401,7 @@ body {
   text-align: center;
   gap: var(--space-5);
   padding-top: clamp(20px, 5vh, 48px);
+  padding-bottom: clamp(64px, 8vw, 88px);
   max-width: 780px;
   margin: 0 auto;
   width: 100%;
@@ -415,6 +424,7 @@ body {
   margin: 0;
   display: inline-flex;
   align-items: center;
+  gap: 7px;
   padding: 6px 14px;
   border-radius: 999px;
   background: var(--accent-soft);
@@ -422,14 +432,15 @@ body {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.01em;
+  border: 1px solid rgba(79, 70, 229, 0.15);
 }
 
 .hero-sub {
   margin: -6px auto 0;
-  max-width: 620px;
+  max-width: 64ch;
   color: var(--text-2);
   font-size: clamp(15.5px, 2vw, 17px);
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
 .text-mode-link {
@@ -554,30 +565,82 @@ body {
 }
 
 .copyright-safety-notice {
-  margin-top: -6px;
-  max-width: 780px;
+  margin-top: -4px;
+  max-width: 740px;
   width: 100%;
-  padding: 10px 18px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  text-align: center;
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  border-left: 3px solid #94a3b8;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
   box-sizing: border-box;
+}
+
+.copyright-safety-notice .notice-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #64748b;
+  display: flex;
 }
 
 .copyright-safety-notice p {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--text-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #64748b;
   font-weight: 500;
 }
 
 /* ============ Sections ============ */
 
 .section {
-  margin-top: clamp(64px, 10vh, 88px);
+  padding-top: clamp(80px, 9vw, 100px);
+  padding-bottom: clamp(80px, 9vw, 100px);
+  margin-top: 0;
+  scroll-margin-top: 24px;
+  box-sizing: border-box;
+}
+
+.section-tint {
+  background: var(--bg-tint);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: calc(50vw - 50%);
+  padding-right: calc(50vw - 50%);
+  border-top: 1px solid var(--bg-tint-border);
+  border-bottom: 1px solid var(--bg-tint-border);
+}
+
+.section-tint-group {
+  background: var(--bg-tint);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: calc(50vw - 50%);
+  padding-right: calc(50vw - 50%);
+  padding-top: clamp(80px, 9vw, 100px);
+  padding-bottom: clamp(80px, 9vw, 100px);
+  border-top: 1px solid var(--bg-tint-border);
+  border-bottom: 1px solid var(--bg-tint-border);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 6vw, 64px);
+  box-sizing: border-box;
+}
+
+.section-tint-group .section {
+  padding-top: 0;
+  padding-bottom: 0;
+  background: transparent;
+  border: none;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .section-h {
@@ -591,8 +654,8 @@ body {
 
 .section-sub {
   text-align: center;
-  margin: 12px auto 0;
-  max-width: 580px;
+  margin: 14px auto 0;
+  max-width: 62ch;
   color: var(--text-2);
   font-size: 15.5px;
   line-height: 1.6;
@@ -602,7 +665,7 @@ body {
 
 .steps-grid {
   list-style: none;
-  margin: var(--space-6) 0 0;
+  margin: 48px 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -638,7 +701,7 @@ body {
 .step p {
   margin: 0;
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.6;
 }
 
@@ -711,41 +774,58 @@ body {
 
 .format-grid {
   list-style: none;
-  margin: var(--space-6) 0 0;
+  margin: 48px 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .format-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
+  padding: 22px 20px;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.format-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .format-card h3 {
   margin: 0 0 6px;
   font-size: 15px;
   font-weight: 700;
+  color: var(--text);
 }
 
 .format-card p {
   margin: 0;
   color: var(--text-2);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   font-family: var(--mono);
 }
 
 .formats-note {
-  margin: var(--space-4) auto 0;
-  max-width: 640px;
+  margin: 28px auto 0;
+  max-width: 65ch;
   text-align: center;
-  color: var(--text-3);
-  font-size: 13.5px;
+  color: var(--text-2);
+  font-size: 14.5px;
   line-height: 1.65;
 }
 
@@ -824,11 +904,11 @@ body {
 /* ============ FAQ ============ */
 
 .faq-list {
-  margin: var(--space-6) auto 0;
+  margin: 48px auto 0;
   max-width: 720px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .faq-item {
@@ -2013,35 +2093,37 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 22px 20px;
+  padding: 24px 22px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   box-shadow: var(--shadow-sm);
 }
 
 .privacy-mini-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid rgba(79, 70, 229, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--accent);
+  margin-bottom: 4px;
+  flex-shrink: 0;
 }
 
 .privacy-mini-card h4 {
   margin: 0;
-  font-size: 14.5px;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--text-1);
+  color: var(--text);
 }
 
 .privacy-mini-card p {
   margin: 0;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-2);
 }
