@@ -7,27 +7,6 @@ on:
     branches: [main]
 
 jobs:
-  backend-tests:
-    name: Backend API Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r web/backend/requirements.txt
-
-      - name: Run pytest
-        run: pytest web/backend/tests -v
-
   frontend-build:
     name: Frontend Build & Typecheck
     runs-on: ubuntu-latest
@@ -49,6 +28,41 @@ jobs:
       - name: Build frontend & prerender
         working-directory: web/frontend
         run: npm run build
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: web/frontend/dist
+          retention-days: 1
+
+  backend-tests:
+    name: Backend API Tests
+    needs: frontend-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download frontend build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: web/frontend/dist
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r web/backend/requirements.txt
+
+      - name: Run pytest
+        run: pytest web/backend/tests -v
 
   engine-integration-tests:
     name: Engine Integration Tests
