@@ -36,7 +36,7 @@ SansMeta does one thing and does it transparently: it shows you exactly what's e
 
 - **Frontend** — React 18 + TypeScript + Vite 5, with a static-prerendered build for zero cold-start page loads and full SEO metadata.
 - **Backend** — FastAPI (Python 3.11+) on Uvicorn, deployable to Cloud Run, Railway, Render, or your own VPS.
-- **Native app** — a standalone macOS app for local batch cleaning on Apple Silicon, no server required.
+- **Engine** — Deterministic offline metadata and watermark cleaner driving image, document, audio/video, and text cleaning via `engine/bridge.py`.
 
 ## Privacy architecture
 

@@ -12,7 +12,7 @@ WORKDIR /app
 COPY web/backend/requirements.txt web/backend/
 RUN pip install --no-cache-dir -r web/backend/requirements.txt
 COPY web/backend web/backend
-COPY app/bridge.py app/bridge.py
+COPY engine/bridge.py engine/bridge.py
 COPY upstream/service/scripts upstream/service/scripts
 COPY --from=frontend /build/dist web/frontend/dist
 WORKDIR /app/web/backend

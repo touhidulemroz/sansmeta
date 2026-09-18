@@ -6,7 +6,7 @@ import unittest
 import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("bridge", ROOT / "app" / "bridge.py")
+spec = importlib.util.spec_from_file_location("bridge", ROOT / "engine" / "bridge.py")
 bridge = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(bridge)
 
