@@ -2326,3 +2326,184 @@ body {
   line-height: 1.6;
   color: var(--text-2);
 }
+
+/* ============ Mac App Pro Commercial Section ============ */
+
+.mac-pro-section {
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.mac-pro-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  padding: 44px 36px 38px;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.mac-pro-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4f46e5, #818cf8, #38bdf8);
+}
+
+.mac-pro-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.mac-pro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+  border: 1px solid rgba(79, 70, 229, 0.18);
+}
+
+.mac-pro-header .section-h {
+  margin: 0 0 10px;
+  font-size: 26px;
+}
+
+.mac-pro-header .section-sub {
+  margin: 0 auto;
+  max-width: 620px;
+}
+
+.mac-pro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.mac-pro-feature {
+  background: rgba(0, 0, 0, 0.015);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mac-pro-feature .feature-icon-bubble {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  border: 1px solid rgba(79, 70, 229, 0.14);
+}
+
+.mac-pro-feature h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mac-pro-feature p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.mac-pro-cta-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.mac-pro-pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mac-pro-pricing .price-tag {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.mac-pro-pricing .price-note {
+  font-size: 14px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.mac-pro-buy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #111827;
+  color: #ffffff;
+  padding: 13px 32px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.mac-pro-buy-btn:hover {
+  background: #1f2937;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.mac-pro-buy-btn:active {
+  transform: translateY(0);
+}
+
+.mac-pro-guarantee {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--text-3);
+  max-width: 580px;
+}
+
+@media (max-width: 768px) {
+  .mac-pro-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .mac-pro-card {
+    padding: 30px 20px 24px;
+  }
+
+  .mac-pro-header .section-h {
+    font-size: 22px;
+  }
+}

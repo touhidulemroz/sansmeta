@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import FileDropZone from './FileDropZone'
-import { MAX_BATCH_FILES, MAX_FILE_MB } from '../api'
+import { MAX_BATCH_FILES, MAX_FILE_MB, MAC_APP_CHECKOUT_URL } from '../api'
 import {
+  AppleIcon,
   AudioIcon,
   CheckCircleIcon,
   ClockIcon,
@@ -14,6 +15,7 @@ import {
   TextFileIcon,
   UploadIcon,
   VideoIcon,
+  ZapIcon,
 } from './Icons'
 
 interface Props {
@@ -265,6 +267,66 @@ export default function Landing({
           unavailable. Files with residual marks are flagged for review, and unsupported
           formats are refused rather than altered.
         </p>
+      </section>
+
+      <section className="section mac-pro-section" id="mac-app" aria-labelledby="mac-app-heading">
+        <div className="mac-pro-card">
+          <div className="mac-pro-header">
+            <div className="mac-pro-badge">
+              <AppleIcon size={14} />
+              <span>NATIVE MACOS APP &middot; PRO EDITION</span>
+            </div>
+            <h2 className="section-h" id="mac-app-heading">
+              Need 100% Offline Processing or Unlimited Batch Sizes?
+            </h2>
+            <p className="section-sub">
+              <strong>SansMeta for Mac</strong> runs entirely on your local Apple Silicon or Intel Mac. Zero cloud uploads, no file size caps, and instant native processing.
+            </p>
+          </div>
+
+          <div className="mac-pro-grid">
+            <div className="mac-pro-feature">
+              <div className="feature-icon-bubble">
+                <ShieldIcon size={20} />
+              </div>
+              <h3>100% Air-Gapped Privacy</h3>
+              <p>Files never leave your local machine. Zero internet connection required during inspection and cleaning.</p>
+            </div>
+            <div className="mac-pro-feature">
+              <div className="feature-icon-bubble">
+                <ZapIcon size={20} />
+              </div>
+              <h3>No Batch or Size Limits</h3>
+              <p>Process gigabytes of 4K videos, massive photo archives, and folders of documents without server timeouts.</p>
+            </div>
+            <div className="mac-pro-feature">
+              <div className="feature-icon-bubble">
+                <CheckCircleIcon size={20} />
+              </div>
+              <h3>Lifetime License &amp; Updates</h3>
+              <p>One simple payment of $19. No recurring monthly SaaS fees, no subscriptions, and free software updates.</p>
+            </div>
+          </div>
+
+          <div className="mac-pro-cta-box">
+            <div className="mac-pro-pricing">
+              <span className="price-tag">$19</span>
+              <span className="price-note">one-time payment &middot; lifetime license</span>
+            </div>
+            <a
+              href={MAC_APP_CHECKOUT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mac-pro-buy-btn"
+            >
+              <AppleIcon size={18} />
+              <span>Get SansMeta for Mac</span>
+            </a>
+            <span className="mac-pro-guarantee">
+              Compatible with macOS 13.0+ (Ventura, Sonoma, Sequoia) &middot; Apple Silicon &amp; Intel &middot; Instant License Key Delivery via Lemon Squeezy
+            </span>
+          </div>
+        </div>
       </section>
 
       <div className="section-tint-group">

@@ -55,6 +55,10 @@ export interface BackendStatusEvent {
 export const MAX_BATCH_FILES = 50
 export const MAX_FILE_MB = 256
 
+export const MAC_APP_CHECKOUT_URL: string = (
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_MAC_APP_CHECKOUT_URL) || "https://sansmeta.lemonsqueezy.com/buy/desktop"
+)
+
 export const API_BASE_URL: string = (
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) || ''
 ).replace(/\/+$/, '')
