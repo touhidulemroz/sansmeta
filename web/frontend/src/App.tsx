@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import FilesMode from './components/FilesMode'
 import TextMode from './components/TextMode'
 import ConsentBanner from './components/ConsentBanner'
 import { TrashIcon } from './components/Icons'
-import { fetchConfig, type AppConfig } from './api'
+import { ensureBackendAwake, fetchConfig, type AppConfig, type BackendStatusEvent } from './api'
 import { initAnalytics, trackEvent } from './analytics'
 
 type Mode = 'files' | 'text'
@@ -18,10 +18,31 @@ const NAV = [
 export default function App() {
   const [mode, setMode] = useState<Mode>('files')
   const [config, setConfig] = useState<AppConfig | null>(null)
+  const [wakeEvent, setWakeEvent] = useState<BackendStatusEvent | null>(null)
+  const [showReady, setShowReady] = useState(false)
+  const wasWakingRef = useRef(false)
 
   useEffect(() => {
     initAnalytics()
-    fetchConfig().then(setConfig).catch(() => setConfig(null))
+    fetchConfig()
+      .then((cfg) => {
+        setConfig(cfg)
+      })
+      .catch(() => {
+        // Backend might be spinning up after inactivity on Render free tier
+        void ensureBackendAwake((ev) => {
+          setWakeEvent(ev)
+          if (ev.state === 'waking') {
+            wasWakingRef.current = true
+          } else if (ev.state === 'ready') {
+            void fetchConfig().then(setConfig).catch(() => undefined)
+            if (wasWakingRef.current) {
+              setShowReady(true)
+              setTimeout(() => setShowReady(false), 4500)
+            }
+          }
+        })
+      })
   }, [])
 
   useEffect(() => {
@@ -80,6 +101,28 @@ export default function App() {
         </div>
       </header>
       <main className="main-content" id="main-content">
+        {wakeEvent?.state === 'waking' && (
+          <div className="engine-status-bar waking" role="status" aria-live="polite">
+            <span className="engine-status-dot" aria-hidden="true" />
+            <span>
+              <strong>Starting secure engine:</strong> Server is waking up from inactivity
+              {wakeEvent.elapsedSeconds > 0 ? ` (${wakeEvent.elapsedSeconds}s)` : ''}.
+              You can select your files now.
+            </span>
+          </div>
+        )}
+        {showReady && (
+          <div className="engine-status-bar ready" role="status">
+            <span className="engine-status-dot" aria-hidden="true" />
+            <span>Processing engine ready. Secure workspaces active.</span>
+          </div>
+        )}
+        {wakeEvent?.state === 'offline' && (
+          <div className="engine-status-bar offline" role="alert">
+            <span className="engine-status-dot" aria-hidden="true" />
+            <span>Processing engine took longer than expected to start. Please refresh or try again.</span>
+          </div>
+        )}
         {mode === 'files' ? (
           <FilesMode onUseText={() => setMode('text')} config={config} />
         ) : (

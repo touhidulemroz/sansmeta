@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ApiError, cleanText } from '../api'
+import { ApiError, cleanText, ensureBackendAwake } from '../api'
 import { trackEvent } from '../analytics'
 import { AlertIcon, CheckIcon, CopyIcon, ResetIcon } from './Icons'
 
@@ -18,6 +18,7 @@ export default function TextMode() {
     setError(null)
     setCopied(false)
     try {
+      await ensureBackendAwake()
       const result = await cleanText(source)
       if (result.ok) {
         setOutput(result.text ?? '')

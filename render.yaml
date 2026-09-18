@@ -1,17 +1,46 @@
+# Render Blueprint Specification
+# Architecture:
+# 1. sansmeta-web: Free Static Site hosted on Render's global CDN (never spins down, zero cold start).
+# 2. sansmeta-api: Docker Web Service on Render Free tier (spins down after 15m; woken gracefully by frontend).
+
 services:
+  # ---- Frontend Static Site (Render Global CDN) ----
   - type: web
-    name: sansmeta
+    name: sansmeta-web
+    runtime: static
+    buildCommand: cd web/frontend && npm install && npm run build
+    staticPublishPath: ./web/frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    envVars:
+      # Set to your Render backend Web Service URL (e.g. https://sansmeta-api.onrender.com)
+      - key: VITE_API_BASE_URL
+        value: ""
+
+  # ---- Backend API Web Service (Docker) ----
+  - type: web
+    name: sansmeta-api
     runtime: docker
     plan: free
     healthCheckPath: /api/health
     envVars:
       - key: WEB_MAX_FILE_BYTES
         value: 104857600
-      # Fallback expiry for temporary files (seconds). Files are deleted sooner after a
-      # completed download, on "clear", on a new batch, or when the page is closed/hidden.
+      # Fallback expiry for temporary files (seconds)
       - key: WEB_JOB_TTL_SECONDS
         value: 900
-      # Public origin for canonical URLs, social metadata, and sitemap.xml.
-      # No trailing slash, e.g. https://sansmeta.onrender.com
+      # Public origin for canonical URLs, social metadata, and sitemap.xml (e.g. https://sansmeta-web.onrender.com)
       - key: WEB_PUBLIC_ORIGIN
         value: ""
+      # Allowed CORS origins (comma-separated). Defaults to * allowing the static site
+      - key: WEB_CORS_ORIGINS
+        value: "*"

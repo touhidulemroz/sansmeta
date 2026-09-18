@@ -4,6 +4,7 @@ import {
   cancelJob,
   deleteJob,
   download,
+  ensureBackendAwake,
   formatBytes,
   inspectFiles,
   jobStatus,
@@ -190,6 +191,8 @@ export default function FilesMode({ onUseText, config }: Props) {
     setUploadProgress(0)
     stopRef.current = false
     markBusy()
+    await ensureBackendAwake()
+    if (stopRef.current || !mountedRef.current) return
     const handle = inspectFiles(
       files.map((item) => item.file),
       preserveMetadata,
@@ -227,6 +230,8 @@ export default function FilesMode({ onUseText, config }: Props) {
     setUploadProgress(0)
     stopRef.current = false
     markBusy()
+    await ensureBackendAwake()
+    if (stopRef.current || !mountedRef.current) return
     const handle = startClean(
       files.map((item) => item.file),
       preserveMetadata,

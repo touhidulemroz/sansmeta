@@ -14,6 +14,8 @@ from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware.cors import CORSMiddleware
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 import bridge_client
 import jobs
@@ -48,6 +50,47 @@ async def lifespan(_app):
 
 
 app = FastAPI(title="SansMeta Web", version=VERSION, lifespan=lifespan)
+
+
+class DynamicCORSMiddleware(CORSMiddleware):
+    """CORS middleware supporting dynamic origin configuration via WEB_CORS_ORIGINS."""
+
+    def __init__(self, app: ASGIApp, **kwargs):
+        super().__init__(
+            app,
+            allow_origins=(),
+            allow_methods=["*"],
+            allow_headers=["*"],
+            allow_credentials=False,
+            expose_headers=["Content-Disposition", "Content-Length"],
+            **kwargs,
+        )
+
+    def is_allowed_origin(self, origin: str) -> bool:
+        raw = os.environ.get("WEB_CORS_ORIGINS", "").strip()
+        if not raw or raw == "*":
+            return True
+        allowed = {o.strip() for o in raw.split(",") if o.strip()}
+        return origin in allowed
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        raw = os.environ.get("WEB_CORS_ORIGINS", "").strip()
+        if not raw or raw == "*":
+            self.allow_all_origins = True
+            self.preflight_explicit_allow_origin = False
+            self.simple_headers["Access-Control-Allow-Origin"] = "*"
+            self.preflight_headers["Access-Control-Allow-Origin"] = "*"
+            self.preflight_headers.pop("Vary", None)
+        else:
+            self.allow_all_origins = False
+            self.preflight_explicit_allow_origin = True
+            self.simple_headers.pop("Access-Control-Allow-Origin", None)
+            self.preflight_headers.pop("Access-Control-Allow-Origin", None)
+            self.preflight_headers["Vary"] = "Origin"
+        await super().__call__(scope, receive, send)
+
+
+app.add_middleware(DynamicCORSMiddleware)
 
 
 def _env_int(name, default):
@@ -315,7 +358,7 @@ def cancel_job(job_id: str, token: str = Query("")):
     job = store.get(job_id, token)
     if job is not None:
         job.cancel_event.set()
-    return {"ok": True}
+    return {"ok": True, "deleted": False}
 
 
 @router.post("/jobs/{job_id}/cleanup")
