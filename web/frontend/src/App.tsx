@@ -130,40 +130,81 @@ export default function App() {
         )}
       </main>
       <footer className="site-footer">
-        <p className="footer-links">
-          <a href="https://github.com/touhidulemroz" target="_blank" rel="noreferrer">
-            @touhidulemroz
-          </a>
-          <span aria-hidden="true">·</span>
-          <a href="/privacy/">Privacy</a>
-          <span aria-hidden="true">·</span>
-          <a href="#faq">FAQ</a>
-          <span aria-hidden="true">·</span>
-          <a href="https://github.com/touhidulemroz/watermarks-cleaner-mac" target="_blank" rel="noreferrer">
-            Source on GitHub
-          </a>
-          <span aria-hidden="true">·</span>
-          <a
-            href="https://github.com/guillaumemeyer/watermarks-remover"
-            target="_blank"
-            rel="noreferrer"
-          >
-            watermarks-remover engine (MIT)
-          </a>
-        </p>
-        <p className="footer-note">
-          <TrashIcon size={13} />
-          Temporary files are deleted after download, when you start over, or when you choose
-          Delete files &mdash; and expire automatically within {fallbackMinutes} minute
-          {fallbackMinutes === 1 ? '' : 's'}.
-        </p>
-        <p className="footer-note footer-note-soft">
-          Closing the page sends a best-effort deletion request, but a browser or network
-          interruption may prevent confirmation.
-        </p>
-        <p className="footer-tagline">
-          Built by <a href="https://github.com/touhidulemroz" target="_blank" rel="noreferrer">@touhidulemroz</a> &mdash; Remove hidden AI metadata online for free.
-        </p>
+        <div className="footer-card">
+          <div className="footer-grid">
+            <div className="footer-brand-col">
+              <div className="footer-brand">
+                <img
+                  src="/logo-mark.png"
+                  alt="SansMeta logo"
+                  width={22}
+                  height={31}
+                  className="footer-logo"
+                />
+                <span className="brand-name">SansMeta</span>
+              </div>
+              <p className="footer-description">
+                Inspect and clean hidden AI metadata, provenance fields (C2PA, EXIF, XMP), and invisible characters from your files online for free.
+              </p>
+              <div className="footer-badge">
+                <span className="badge-dot" aria-hidden="true" />
+                <span>Zero tracking &middot; Ephemeral storage</span>
+              </div>
+            </div>
+
+            <div className="footer-col">
+              <h4 className="footer-heading">Navigation</h4>
+              <ul className="footer-nav-list">
+                <li><a href="#how-it-works">How it works</a></li>
+                <li><a href="#formats">Supported formats</a></li>
+                <li><a href="#privacy">Privacy overview</a></li>
+                <li><a href="#faq">FAQ</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-col">
+              <h4 className="footer-heading">Open Source</h4>
+              <ul className="footer-nav-list">
+                <li>
+                  <a href="https://github.com/touhidulemroz/watermarks-cleaner-mac" target="_blank" rel="noreferrer">
+                    SansMeta on GitHub
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/guillaumemeyer/watermarks-remover" target="_blank" rel="noreferrer">
+                    watermarks-remover (MIT)
+                  </a>
+                </li>
+                <li>
+                  <a href="/privacy/">Privacy Policy</a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="footer-col footer-col-lifecycle">
+              <h4 className="footer-heading">File Lifecycle</h4>
+              <p className="footer-lifecycle-note">
+                <TrashIcon size={14} />
+                <span>
+                  Auto-deleted after download or after {fallbackMinutes} minute
+                  {fallbackMinutes === 1 ? '' : 's'} of inactivity.
+                </span>
+              </p>
+              <p className="footer-lifecycle-sub">
+                Originals are never modified. Closing the tab triggers immediate cleanup.
+              </p>
+            </div>
+          </div>
+
+          <div className="footer-bottom">
+            <p className="footer-bottom-copy">
+              &copy; {new Date().getFullYear()} SansMeta &middot; Online AI Metadata Cleaner
+            </p>
+            <p className="footer-bottom-author">
+              Crafted by <a href="https://github.com/touhidulemroz" target="_blank" rel="noreferrer">@touhidulemroz</a>
+            </p>
+          </div>
+        </div>
       </footer>
       <ConsentBanner />
     </div>
