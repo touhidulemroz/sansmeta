@@ -12,6 +12,10 @@ export default function FileDropZone({ onFiles, busy, compact = false, children 
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
+  function openPicker() {
+    if (!busy) inputRef.current?.click()
+  }
+
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault()
     setDragging(false)
@@ -20,17 +24,20 @@ export default function FileDropZone({ onFiles, busy, compact = false, children 
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Enter' && !busy) inputRef.current?.click()
+    if ((event.key === 'Enter' || event.key === ' ') && !busy) {
+      event.preventDefault()
+      openPicker()
+    }
   }
 
   return (
     <div
-      className={`drop-zone${compact ? ' compact' : ''}${dragging ? ' dragging' : ''}`}
+      className={`drop-zone${compact ? ' compact' : ''}${dragging ? ' dragging' : ''}${busy ? ' busy' : ''}`}
       role="button"
-      tabIndex={0}
-      onClick={() => {
-        if (!busy) inputRef.current?.click()
-      }}
+      tabIndex={busy ? -1 : 0}
+      aria-label="Upload files"
+      aria-disabled={busy}
+      onClick={openPicker}
       onKeyDown={handleKeyDown}
       onDragOver={(event) => {
         event.preventDefault()
@@ -44,12 +51,13 @@ export default function FileDropZone({ onFiles, busy, compact = false, children 
         type="file"
         multiple
         hidden
+        disabled={busy}
         onChange={(event) => {
           if (event.target.files) onFiles(Array.from(event.target.files))
           event.target.value = ''
         }}
       />
-      {children ?? (compact ? <span className="drop-hint">Drop more files or click to browse</span> : null)}
+      {children ?? (compact ? <span className="drop-hint">Add more files</span> : null)}
     </div>
   )
 }

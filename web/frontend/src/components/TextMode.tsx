@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ApiError, cleanText } from '../api'
 import { trackEvent } from '../analytics'
+import { AlertIcon, CheckIcon, CopyIcon, ResetIcon, SparkleIcon } from './Icons'
 
 export default function TextMode() {
   const [source, setSource] = useState('')
@@ -56,46 +57,87 @@ export default function TextMode() {
 
   return (
     <div className="text-mode">
-      <div className="pane">
-        <div className="pane-head">
-          <span>Original text</span>
-          <span className="count">{source.length.toLocaleString()} characters</span>
+      <header className="text-head">
+        <h1>Clean hidden characters from text</h1>
+        <p>
+          Paste text to strip invisible Unicode watermark characters and see exactly how
+          many were removed or replaced.
+        </p>
+      </header>
+
+      <div className="text-columns">
+        <div className="pane">
+          <div className="pane-head">
+            <label htmlFor="text-source">Original text</label>
+            <span className="count">{source.length.toLocaleString()} characters</span>
+          </div>
+          <textarea
+            id="text-source"
+            value={source}
+            onChange={(event) => setSource(event.target.value)}
+            placeholder="Paste text that may contain hidden watermark characters…"
+            spellCheck={false}
+          />
+          <div className="pane-actions">
+            <button
+              className="btn primary"
+              onClick={runClean}
+              disabled={busy || source.length === 0}
+            >
+              <SparkleIcon size={15} />
+              {busy ? 'Cleaning…' : 'Clean text'}
+            </button>
+          </div>
         </div>
-        <textarea
-          value={source}
-          onChange={(event) => setSource(event.target.value)}
-          placeholder="Paste text that may contain hidden watermark characters…"
-          spellCheck={false}
-        />
-      </div>
-      <div className="text-actions">
-        <button className="btn" onClick={runClean} disabled={busy || source.length === 0}>
-          {busy ? 'Cleaning…' : 'Clean text'}
-        </button>
-        <button className="btn ghost" onClick={copyOutput} disabled={!output}>
-          {copied ? 'Copied' : 'Copy result'}
-        </button>
-        <button
-          className="btn ghost"
-          onClick={clearAll}
-          disabled={!source && !output}
-        >
-          Clear
-        </button>
-      </div>
-      <div className="pane">
-        <div className="pane-head">
-          <span>Cleaned text</span>
-          {stats && (
-            <span className="stats">
-              <span className="chip clean">{stats.removed} removed</span>
-              <span className="chip clean">{stats.replaced} replaced</span>
+
+        <div className="pane">
+          <div className="pane-head">
+            <label htmlFor="text-result">Cleaned text</label>
+            <span className="stats" aria-live="polite">
+              {stats && (
+                <>
+                  <span className="chip clean">{stats.removed} removed</span>
+                  <span className="chip clean">{stats.replaced} replaced</span>
+                </>
+              )}
             </span>
-          )}
+          </div>
+          <textarea
+            id="text-result"
+            value={output}
+            readOnly
+            placeholder="The cleaned text appears here…"
+            spellCheck={false}
+          />
+          <div className="pane-actions">
+            <button className="btn ghost" onClick={copyOutput} disabled={!output}>
+              <CopyIcon size={15} />
+              {copied ? 'Copied' : 'Copy result'}
+            </button>
+            <button className="btn ghost" onClick={clearAll} disabled={!source && !output}>
+              <ResetIcon size={15} />
+              Reset
+            </button>
+          </div>
         </div>
-        <textarea value={output} readOnly placeholder="Result appears here…" spellCheck={false} />
       </div>
-      {error && <div className="banner err">{error}</div>}
+
+      <span className="visually-hidden" aria-live="polite">
+        {copied ? 'Result copied to clipboard' : ''}
+      </span>
+
+      {error && (
+        <div className="banner err" role="alert">
+          <AlertIcon size={16} />
+          {error}
+        </div>
+      )}
+      {copied && !error && (
+        <div className="banner ok">
+          <CheckIcon size={16} />
+          Result copied to clipboard.
+        </div>
+      )}
     </div>
   )
 }

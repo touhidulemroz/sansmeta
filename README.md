@@ -59,6 +59,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design, and [CONTRIBUTING.md
 The same cleaning engine is available in the browser — the Mac app is untouched; the web backend calls the same `app/bridge.py` adapter the SwiftUI app uses.
 
 - Same features as the Mac app: batch inspect/clean, metadata toggle, per-file reports, download `.cleaned` copies (individually or as a zip), and text mode.
+- Redesigned light-first UI: a focused hero and dropzone when empty (no disabled controls), a batch workspace after files are added, honest "handles / does not handle" scope messaging, WCAG-AA contrast, keyboard-accessible controls, and responsive layouts from 320 px up. See [web/README.md](web/README.md) for the frontend structure and design system.
 - Local-first: files stay on the machine running the server; no accounts or external services.
 - One deployable service: the FastAPI backend serves the built React UI, so you can run it on a VPS (Dockerfile included) or just on your own machine.
 

@@ -3,6 +3,7 @@ import {
   ApiError,
   cancelJob,
   download,
+  formatBytes,
   inspectFiles,
   jobStatus,
   startClean,
@@ -14,6 +15,14 @@ import FileList from './FileList'
 import Landing from './Landing'
 import ProgressBar from './ProgressBar'
 import { trackEvent } from '../analytics'
+import {
+  AlertIcon,
+  CheckIcon,
+  DownloadIcon,
+  SearchIcon,
+  SparkleIcon,
+  StopIcon,
+} from './Icons'
 
 export interface LocalFile {
   id: number
@@ -266,8 +275,44 @@ export default function FilesMode() {
     )
   }
 
+  if (files.length === 0) {
+    return <Landing onFiles={addFiles} busy={busy} />
+  }
+
+  const totalBytes = files.reduce((sum, item) => sum + item.size, 0)
+
+  function downloadZip() {
+    if (zipUrl) {
+      download(zipUrl)
+      trackEvent('download', { type: 'zip' })
+    }
+  }
+
   return (
-    <div className="files-mode">
+    <div className="workspace">
+      <header className="workspace-head">
+        <div>
+          <h1 className="workspace-title">Your files</h1>
+          <p className="workspace-sub">
+            {files.length} file{files.length === 1 ? '' : 's'} · {formatBytes(totalBytes)} ·
+            cleaned copies stay separate from originals
+          </p>
+        </div>
+        <div className="workspace-head-actions">
+          {zipUrl && (
+            <button className="btn small" onClick={downloadZip}>
+              <DownloadIcon size={14} />
+              Download all (.zip)
+            </button>
+          )}
+          {!busy && (
+            <button className="btn ghost small" onClick={clearFiles}>
+              Clear list
+            </button>
+          )}
+        </div>
+      </header>
+
       <div className="toolbar">
         <label className="toggle">
           <input
@@ -276,30 +321,29 @@ export default function FilesMode() {
             disabled={busy}
             onChange={(event) => setPreserveMetadata(event.target.checked)}
           />
-          <span>Keep non-AI metadata</span>
+          <span className="toggle-labels">
+            <span className="toggle-label">Keep non-AI metadata</span>
+            <span className="toggle-note">Camera settings, dates, and ordinary fields stay</span>
+          </span>
         </label>
         <div className="actions">
-          <button
-            className="btn ghost"
-            onClick={runInspect}
-            disabled={busy || files.length === 0}
-          >
+          <button className="btn ghost" onClick={runInspect} disabled={busy}>
+            <SearchIcon size={15} />
             Inspect all
           </button>
-          <button
-            className="btn"
-            onClick={runClean}
-            disabled={busy || files.length === 0}
-          >
-            Clean &amp; save copies…
+          <button className="btn primary" onClick={runClean} disabled={busy}>
+            <SparkleIcon size={15} />
+            Clean &amp; save copies
           </button>
           {busy && (
             <button className="btn danger" onClick={stop}>
+              <StopIcon size={14} />
               Stop
             </button>
           )}
         </div>
       </div>
+
       {busy && (
         <ProgressBar
           determinate={uploading}
@@ -307,23 +351,35 @@ export default function FilesMode() {
           label={uploading ? 'Uploading…' : 'Working — files are cleaned one by one.'}
         />
       )}
-      {error && <div className="banner err">{error}</div>}
-      {batchSummary && <div className="banner ok">{batchSummary}</div>}
-      {files.length === 0 ? (
-        <Landing onFiles={addFiles} busy={busy} />
-      ) : (
-        <FileList
-          files={files}
-          busy={busy}
-          zipUrl={zipUrl}
-          onAdd={addFiles}
-          onRemove={removeFile}
-          onClear={clearFiles}
-          onToggle={toggleReport}
-          onDownload={(item) => { if (item.downloadUrl) { download(item.downloadUrl); trackEvent('download', { type: 'single' }) } }}
-          onDownloadZip={() => { if (zipUrl) { download(zipUrl); trackEvent('download', { type: 'zip' }) } }}
-        />
-      )}
+
+      <div className="status-region" aria-live="polite">
+        {error && (
+          <div className="banner err" role="alert">
+            <AlertIcon size={16} />
+            {error}
+          </div>
+        )}
+        {batchSummary && (
+          <div className="banner ok">
+            <CheckIcon size={16} />
+            {batchSummary}
+          </div>
+        )}
+      </div>
+
+      <FileList
+        files={files}
+        busy={busy}
+        onAdd={addFiles}
+        onRemove={removeFile}
+        onToggle={toggleReport}
+        onDownload={(item) => {
+          if (item.downloadUrl) {
+            download(item.downloadUrl)
+            trackEvent('download', { type: 'single' })
+          }
+        }}
+      />
     </div>
   )
 }

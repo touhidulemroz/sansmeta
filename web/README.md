@@ -8,6 +8,40 @@ Browser version of the Mac app. The FastAPI backend calls the unchanged `app/bri
 - `frontend/` — Vite + React + TypeScript UI, built into `frontend/dist` and served by the backend in production.
 - `Dockerfile` — multi-stage build producing one deployable service.
 
+## Frontend
+
+React 18 + TypeScript + Vite with plain CSS — no UI framework, no CSS library, no runtime dependencies beyond React. Entry is `src/main.tsx` → `App.tsx`.
+
+### Structure
+
+| File | Role |
+| --- | --- |
+| `src/App.tsx` | Shell: header (logo, privacy reassurance, Files/Text segmented control), footer with credits and the 1-hour deletion reminder |
+| `src/components/Landing.tsx` | Empty state: hero, dropzone CTA, trust chips, 3-step explainer, always-visible scope card (handles vs. does not handle) |
+| `src/components/FilesMode.tsx` | State and orchestration: dedupe by `name:size`, inspect/clean jobs, polling, cancel, banners. Renders `Landing` when empty, the workspace otherwise |
+| `src/components/FileDropZone.tsx` | Dropzone: click, drag-over, Space/Enter keyboard activation, busy state |
+| `src/components/FileList.tsx`, `FileRow.tsx` | Selected-file list: kind icons, status chips, expandable technical reports, remove/download |
+| `src/components/TextMode.tsx` | Text cleaning: original/cleaned panes, live character count, removed/replaced stats, copy and reset |
+| `src/components/ProgressBar.tsx`, `ReportView.tsx` | Upload/processing progress; key-value engine reports |
+| `src/components/Icons.tsx` | Inline SVG icon set (no icon dependency) |
+| `src/api.ts`, `src/analytics.ts` | API client (contracts above); GA4 event helper |
+
+### Design system
+
+All styling lives in `src/styles.css` as CSS custom properties: page/surface/text/accent/border/success/warning/error colors, radii, shadows, spacing scale, and `--page-width: 1120px`. The design is light-first (`color-scheme: light`), warm off-white page with white surfaces, an indigo→cyan accent system, one gradient reserved for primary actions, system font stack, and monospace only for file names and technical values. There is no automatic dark theme.
+
+### UX rules
+
+- The empty state shows only the hero and upload CTA — no disabled processing controls.
+- After files are added, the workspace (batch summary, "Keep non-AI metadata" toggle, Inspect/Clean/Stop, progress, file list) appears; originals are never modified and cleaned copies are returned separately.
+- Scope messaging is honest and always visible: the tool removes supported C2PA/EXIF/XMP provenance and invisible Unicode marks; it does not remove visible logos, pixel-level SynthID, or guarantee AI-detector outcomes.
+
+### Accessibility & responsiveness
+
+- Single `h1` per view; segmented control uses `aria-pressed` buttons; dropzone is a keyboard-operable `role="button"`; expandable reports expose `aria-expanded`; status is never color-only; async feedback uses `aria-live` regions.
+- Text contrast meets WCAG AA (≥ 4.5:1); the three main states (landing, workspace, text) pass axe-core with 0 violations.
+- Layout verified from 320 px to 1900 px with no horizontal overflow; content centers at 1120 px; panes stack below 700 px; touch targets are ≥ 44 px on mobile; `prefers-reduced-motion` disables animations.
+
 ## API
 
 | Method | Path | Purpose |
