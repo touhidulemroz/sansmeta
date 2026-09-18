@@ -16,9 +16,10 @@ import {
 
 interface Props {
   config?: AppConfig | null
+  onUseFiles?: () => void
 }
 
-export default function TextMode({ config }: Props = {}) {
+export default function TextMode({ config, onUseFiles }: Props = {}) {
   const fallbackMinutes = Math.max(1, Math.round((config?.jobTtlSeconds ?? 900) / 60))
   const [source, setSource] = useState('')
   const [output, setOutput] = useState('')
@@ -187,23 +188,24 @@ export default function TextMode({ config }: Props = {}) {
         </div>
       )}
 
+      {onUseFiles && (
+        <button type="button" className="text-mode-link" onClick={onUseFiles}>
+          Prefer files? Clean AI watermarks &amp; metadata from files instead
+        </button>
+      )}
+
       {/* Consistent Trust Signals across modes */}
       <div className="hero-trust-bar text-trust-bar">
-        <span className="trust-item">
-          <ShieldIcon size={14} />
-          <span>No account</span>
+        <span className="trust-pill">
+          <LockIcon size={13} /> No account
         </span>
-        <span className="trust-dot">&middot;</span>
-        <span className="trust-item">
-          <LockIcon size={14} />
-          <span>Originals untouched</span>
+        <span className="trust-pill">
+          <ShieldIcon size={13} /> Originals untouched
         </span>
-        <span className="trust-dot">&middot;</span>
-        <span className="trust-item">
-          <ClockIcon size={14} />
-          <span>Auto-purged in {fallbackMinutes}m</span>
+        <span className="trust-pill">
+          <ClockIcon size={13} /> Auto-purged in {fallbackMinutes}m
         </span>
-        <span className="trust-dot">&middot;</span>
+        <span className="trust-sep">&middot;</span>
         <span className="trust-meta">Zero storage &middot; Ephemeral processing</span>
       </div>
 
