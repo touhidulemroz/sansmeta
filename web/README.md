@@ -158,8 +158,7 @@ cd ../backend && .venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
 or
 
 ```sh
-docker build -t sansmeta-web .
-docker run -p 8000:8000 sansmeta-web
+docker build -t sansmeta-web .\ndocker run -p 8000:8000 sansmeta-web
 ```
 
 ## Host free on Render
@@ -167,7 +166,7 @@ docker run -p 8000:8000 sansmeta-web
 The repo-root `render.yaml` Blueprint deploys the Docker service on Render's free plan:
 
 1. Sign up at render.com (GitHub login is easiest).
-2. **New + → Blueprint** → connect your GitHub account → select the `watermarks-cleaner-mac` repo.
+2. **New + → Blueprint** → connect your GitHub account → select the `sansmeta` repo.
 3. Render reads `render.yaml`, builds the Dockerfile, and deploys. Set `WEB_PUBLIC_ORIGIN` to the service's final URL (e.g. its `.onrender.com` address) to enable canonical URLs, social tags and `sitemap.xml`.
 
 Notes for the free plan:

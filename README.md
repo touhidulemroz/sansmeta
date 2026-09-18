@@ -48,8 +48,8 @@ SansMeta does one thing and does it transparently: it shows you exactly what's e
 ## Getting started
 
 ```bash
-git clone https://github.com/touhidulemroz/watermarks-cleaner-mac.git
-cd watermarks-cleaner-mac
+git clone https://github.com/touhidulemroz/sansmeta.git
+cd sansmeta
 ```
 
 **Backend (FastAPI)**
