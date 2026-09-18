@@ -57,7 +57,17 @@ export default function App() {
         Skip to content
       </a>
       <header className="site-header">
-        <div className="brand">
+        <a
+          href="/"
+          className="brand"
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            e.preventDefault();
+            setMode("files");
+            window.history.pushState(null, "", "/");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
           <img
             className="logo"
             src="/logo-mark.png"
@@ -69,7 +79,7 @@ export default function App() {
             <span className="brand-name">SansMeta</span>
             <span className="brand-note">Remove hidden AI metadata, online</span>
           </div>
-        </div>
+        </a>
         <nav className="site-nav" aria-label="Main">
           <ul>
             {NAV.map((item) => (
