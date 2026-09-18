@@ -551,10 +551,11 @@ body {
   margin-top: -6px;
   max-width: 780px;
   width: 100%;
-  padding: 11px 20px;
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.28);
+  padding: 10px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   text-align: center;
   box-sizing: border-box;
 }
@@ -563,18 +564,8 @@ body {
   margin: 0;
   font-size: 12.5px;
   line-height: 1.5;
-  color: #b45309;
+  color: var(--text-2);
   font-weight: 500;
-}
-
-@media (prefers-color-scheme: dark) {
-  .copyright-safety-notice {
-    background: rgba(245, 158, 11, 0.12);
-    border-color: rgba(245, 158, 11, 0.35);
-  }
-  .copyright-safety-notice p {
-    color: #fcd34d;
-  }
 }
 
 /* ============ Sections ============ */
