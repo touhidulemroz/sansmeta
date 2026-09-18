@@ -177,4 +177,4 @@ Notes for the free plan:
 
 ## Relationship to the Mac app
 
-`app/`, `upstream/`, `tests/`, and `scripts/build.sh` are frozen: the web backend never modifies them, only invokes `app/bridge.py` read-only. Both apps can run side by side; the engine is stateless per invocation and export naming is collision-safe across processes. The Mac app keeps its own name and identity; aligning it with the SansMeta brand is tracked as deferred work in `plan.md`.
+`app/`, `upstream/`, `tests/`, and `scripts/build.sh` are frozen: the web backend never modifies them, only invokes `app/bridge.py` read-only. Both apps can run side by side; the engine is stateless per invocation and export naming is collision-safe across processes. The Mac app keeps its own name and identity; aligning it with the SansMeta brand is tracked as deferred future work.
