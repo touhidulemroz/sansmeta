@@ -83,6 +83,14 @@ npm run dev
 | `GET /api/download/{token}` | Download one cleaned file |
 | `GET /api/download-all/{jobId}` | Download the whole job as a zip |
 
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for local development setup, testing instructions, and pull request guidelines.
+
+## Security
+
+Please see [SECURITY.md](SECURITY.md) for vulnerability disclosure guidelines.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
