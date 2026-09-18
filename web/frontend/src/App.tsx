@@ -88,6 +88,10 @@ export default function App() {
       </main>
       <footer className="site-footer">
         <p className="footer-links">
+          <a href="https://github.com/touhidulemroz" target="_blank" rel="noreferrer">
+            @touhidulemroz
+          </a>
+          <span aria-hidden="true">·</span>
           <a href="/privacy/">Privacy</a>
           <span aria-hidden="true">·</span>
           <a href="#faq">FAQ</a>
@@ -114,7 +118,9 @@ export default function App() {
           Closing the page sends a best-effort deletion request, but a browser or network
           interruption may prevent confirmation.
         </p>
-        <p className="footer-tagline">Remove hidden AI metadata online for free.</p>
+        <p className="footer-tagline">
+          Built by <a href="https://github.com/touhidulemroz" target="_blank" rel="noreferrer">@touhidulemroz</a> &mdash; Remove hidden AI metadata online for free.
+        </p>
       </footer>
       <ConsentBanner />
     </div>
