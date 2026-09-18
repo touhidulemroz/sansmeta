@@ -1,99 +1,92 @@
-# Watermarks Cleaner for Mac
+# SansMeta
 
-A native SwiftUI Mac app that removes AI provenance metadata and hidden watermark characters from your files — completely offline, on your own Mac.
+**Strip AI provenance metadata and invisible watermarks — without ever storing your files.**
 
-Built on the deterministic cleaning engine of [guillaumemeyer/watermarks-remover](https://github.com/guillaumemeyer/watermarks-remover) (MIT).
+SansMeta is an open-source, privacy-first tool that inspects and removes hidden AI markers — C2PA manifests, AI-specific EXIF/XMP tags, and invisible Unicode watermarks — from images, documents, audio/video, and pasted text. No accounts. No tracking. No permanent storage. Your originals are never touched.
 
-## Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-- **Inspect before you clean** — see hidden metadata and text marks the engine finds, per file.
-- **Batch cleaning** — drop or add many files; originals are always preserved.
-- **Safe exports** — every clean writes a new `name.cleaned.ext` copy into a folder you choose; existing exports are never overwritten, even across concurrent app runs.
-- **Text mode** — paste text, remove invisible Unicode marks, copy the result.
-- **Metadata control** — keep ordinary photo/media metadata (default), or request broader removal.
-- **Local only** — no account, API key, server, or internet connection. Files never leave your Mac.
+---
 
-## Usage
+## Why SansMeta
 
-1. Add or drop files into the window (images, documents, audio, video, or text).
-2. **Inspect all** to review hidden metadata and text marks.
-3. **Clean & save copies…** and choose an output folder.
-4. Select a file to read its technical report or reveal the saved copy in Finder.
+Every major AI image and text generator now embeds invisible signals in its output — C2PA content-credential manifests, tool-signature EXIF/XMP fields, or zero-width Unicode characters slipped into text. These markers travel silently with your files long after you've stopped thinking about them, and most "metadata cleaner" tools either want your email address, hold your files on a server indefinitely, or only handle one file type at a time.
 
-**Stop** ends a batch after the current file finishes. Each operation has a three-minute timeout; the engine's input limit is 256 MB per file.
+SansMeta does one thing and does it transparently: it shows you exactly what's embedded, strips it, and deletes everything — including your uploaded copy — within minutes. The code is MIT-licensed and readable end to end, so "trust us" is never the only option.
 
-## Install
+## What it cleans
 
-Open **dist/Watermarks Cleaner.app** in Finder and move it to Applications if you like. The cleaning engine is bundled inside the app; it uses this Mac's Python 3.10+ installation.
+| Category | Formats | Removes |
+|---|---|---|
+| **Images** | PNG, JPEG, WebP, AVIF, HEIC/HEIF, SVG | C2PA manifests, AI tool signatures (Midjourney, DALL·E, Stable Diffusion, Firefly), EXIF/IPTC/XMP — pixels untouched |
+| **Documents** | PDF, DOCX, XLSX, PPTX, EPUB, HTML, Markdown | Author traces, AI-generation comments, revision history, metadata streams |
+| **Audio/Video** | MP3, WAV, M4A, FLAC, OGG, AAC, AIFF, MP4, MOV, MKV, WEBM, AVI | Metadata headers, tool tags, non-media metadata tracks |
+| **Text** | Pasted text | Zero-width characters, BiDi/Trojan Source overrides, soft hyphens, Unicode tags, variation selectors — with a live removed-character counter |
 
-## Scope & limitations
+**Out of scope, on purpose:** SansMeta does not remove visible watermarks, logos, or pixel-frequency marks like Google SynthID, and it never rewrites or rephrases your text. It cleans metadata, not content.
 
-Removes supported AI provenance metadata — C2PA/EXIF/XMP fields — and hidden Unicode characters. It does **not** erase visible logos, remove pixel-level SynthID, rewrite text, or guarantee AI detectors judge content human-written. Upstream's optional model/research backends are not configured in this app.
+## How it works
 
-PDF processing is best-effort without optional tools (qpdf, exiftool, Ghostscript). Files with incomplete cleaning or residual marks are labeled for review — always check the result when document appearance or metadata preservation matters.
+1. **Upload** up to 50 files (256 MB each) via drag-and-drop, or paste text.
+2. **Inspect** — see exactly what hidden markers were found, before anything is changed.
+3. **Clean** — SansMeta produces a separate sanitized copy; your original is never modified.
+4. **Download** — get your file back instantly. It's deleted from the server the moment you download it, or automatically after 15 minutes of inactivity.
 
-## Repository layout
+## Architecture
 
-```
-app/                    SwiftUI interface + local adapter
-  WatermarksApp.swift     UI, batch orchestration, reports
-  bridge.py               JSON-over-stdio adapter to the engine
-  Assets/, Info.plist     Icon and bundle metadata
-scripts/build.sh        Builds dist/Watermarks Cleaner.app (ad-hoc signed)
-scripts/web-dev.sh      Runs the web backend + frontend dev servers
-tests/test_app.py       Integration tests (stdlib unittest)
-upstream/               Pinned, unmodified cleaning engine (vendored)
-  service/scripts/        The upstream cleaners
-  tests/fixtures/         Samples used by the integration tests
-  LICENSE                 Upstream MIT license
-web/                    Browser version (FastAPI backend + React frontend)
-  backend/                Reuses app/bridge.py as a subprocess, unchanged
-  frontend/               Vite + React + TypeScript UI
-  Dockerfile              Single deployable service (serves the built UI)
-```
+- **Frontend** — React 18 + TypeScript + Vite 5, with a static-prerendered build for zero cold-start page loads and full SEO metadata.
+- **Backend** — FastAPI (Python 3.11+) on Uvicorn, deployable to Cloud Run, Railway, Render, or your own VPS.
+- **Native app** — a standalone macOS app for local batch cleaning on Apple Silicon, no server required.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design, and [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and the upstream-update procedure.
+## Privacy architecture
 
-## Web version — SansMeta
+- **No accounts, no cookies** — sessions are scoped to random, temporary job IDs.
+- **Zero permanent retention** — processed files live only in ephemeral sandbox storage for the duration of the session.
+- **Hard auto-purge** — every job is deleted within 15 minutes of inactivity, or immediately on download.
+- **Fully open source** — MIT licensed and verifiable, not "trust us."
 
-The same cleaning engine is available in the browser under the **SansMeta** brand ("Remove Hidden AI Metadata Online for Free"). The Mac app is untouched; the web backend calls the same `app/bridge.py` adapter the SwiftUI app uses.
+## Getting started
 
-- Same features as the Mac app: batch inspect/clean, metadata toggle, per-file reports, download `.cleaned` copies (individually or as a zip), and text mode.
-- A minimal, light-first utility UI: always-visible landing (hero, formats, how-it-works, scope, terminology, privacy, FAQ), the batch workspace below it, honest "handles / does not handle" scope messaging, WCAG-AA contrast, keyboard-accessible controls, consent-gated analytics, and responsive layouts from 320 px up. See [web/README.md](web/README.md) for the frontend structure, design system, and SEO configuration.
-- Server-side processing with honest privacy copy: temporary workspaces are deleted after completed downloads, explicit/start-over cleanup, or a configurable fallback expiry of 15 minutes by default. See the dedicated [privacy page](/web/frontend/privacy/index.html).
-- Landing content is prerendered into the initial HTML at build time; canonical URLs, Open Graph/Twitter tags, `robots.txt` and `sitemap.xml` are driven by the `WEB_PUBLIC_ORIGIN` environment variable.
-- One deployable service: the FastAPI backend serves the built React UI, so you can run it on a VPS (Dockerfile included) or just on your own machine.
-
-Quick start (see [web/README.md](web/README.md) for details):
-
-```sh
-cd web/backend && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-cd ../frontend && npm install
-bash scripts/web-dev.sh   # open http://localhost:5173
+```bash
+git clone https://github.com/touhidulemroz/watermarks-cleaner-mac.git
+cd watermarks-cleaner-mac
 ```
 
-Production build and run:
+**Backend (FastAPI)**
 
-```sh
-cd web/frontend && npm run build
-cd ../backend && .venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000   # open http://localhost:8000
+```bash
+cd web/backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 ```
 
-Docker:
+**Frontend (Vite + React)**
 
-```sh
-docker build -t sansmeta-web . && docker run -p 8000:8000 sansmeta-web
+```bash
+cd web/frontend
+npm install
+npm run dev
+# runs at http://localhost:5173
 ```
 
-## Build and verify
+## API
 
-Requirements: Apple Silicon Mac, Xcode Command Line Tools, Python 3.10+. This build is locally ad-hoc signed, not notarized for public distribution. It uses Python from `/opt/homebrew/bin`, `/usr/local/bin`, or `/usr/bin`.
-
-```sh
-bash scripts/build.sh
-python3 -m unittest discover -s tests -v
-```
+| Endpoint | Purpose |
+|---|---|
+| `GET /health`, `GET /api/config` | Service health and runtime config |
+| `POST /api/upload` | Batch upload, returns tokenized file entries |
+| `POST /api/inspect` | Pre-clean metadata inspection report |
+| `POST /api/clean` | Runs the sanitization pass |
+| `POST /api/text` | Real-time invisible-Unicode cleaner |
+| `GET /api/download/{token}` | Download one cleaned file |
+| `GET /api/download-all/{jobId}` | Download the whole job as a zip |
 
 ## License
 
-The cleaning engine is [guillaumemeyer/watermarks-remover](https://github.com/guillaumemeyer/watermarks-remover) (MIT), pinned at revision `e4d2bd49c4cb84c5fddb50f5361618cfb3b75def`; its license is retained in `upstream/LICENSE` and inside the app bundle. No upstream hooks, agent skills, network service, or optional model backends are installed or launched.
+MIT — see [LICENSE](LICENSE).
+
+## Author
+
+Built by [Touhidul Islam Emroz](https://github.com/touhidulemroz).
