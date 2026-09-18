@@ -54,13 +54,14 @@ web/                    Browser version (FastAPI backend + React frontend)
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design, and [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and the upstream-update procedure.
 
-## Web version
+## Web version — SansMeta
 
-The same cleaning engine is available in the browser — the Mac app is untouched; the web backend calls the same `app/bridge.py` adapter the SwiftUI app uses.
+The same cleaning engine is available in the browser under the **SansMeta** brand ("Remove Hidden AI Metadata Online for Free"). The Mac app is untouched; the web backend calls the same `app/bridge.py` adapter the SwiftUI app uses.
 
 - Same features as the Mac app: batch inspect/clean, metadata toggle, per-file reports, download `.cleaned` copies (individually or as a zip), and text mode.
-- Redesigned light-first UI: a focused hero and dropzone when empty (no disabled controls), a batch workspace after files are added, honest "handles / does not handle" scope messaging, WCAG-AA contrast, keyboard-accessible controls, and responsive layouts from 320 px up. See [web/README.md](web/README.md) for the frontend structure and design system.
-- Local-first: files stay on the machine running the server; no accounts or external services.
+- A minimal, light-first utility UI: always-visible landing (hero, formats, how-it-works, scope, terminology, privacy, FAQ), the batch workspace below it, honest "handles / does not handle" scope messaging, WCAG-AA contrast, keyboard-accessible controls, consent-gated analytics, and responsive layouts from 320 px up. See [web/README.md](web/README.md) for the frontend structure, design system, and SEO configuration.
+- Server-side processing with honest privacy copy: temporary workspaces are deleted after completed downloads, explicit/start-over cleanup, or a configurable fallback expiry of 15 minutes by default. See the dedicated [privacy page](/web/frontend/privacy/index.html).
+- Landing content is prerendered into the initial HTML at build time; canonical URLs, Open Graph/Twitter tags, `robots.txt` and `sitemap.xml` are driven by the `WEB_PUBLIC_ORIGIN` environment variable.
 - One deployable service: the FastAPI backend serves the built React UI, so you can run it on a VPS (Dockerfile included) or just on your own machine.
 
 Quick start (see [web/README.md](web/README.md) for details):
@@ -81,7 +82,7 @@ cd ../backend && .venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000   # ope
 Docker:
 
 ```sh
-docker build -t watermarks-cleaner-web . && docker run -p 8000:8000 watermarks-cleaner-web
+docker build -t sansmeta-web . && docker run -p 8000:8000 sansmeta-web
 ```
 
 ## Build and verify

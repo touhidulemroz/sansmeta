@@ -2,17 +2,133 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#faf9f7" />
-    <title>Watermarks Cleaner</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YEC7FP0XWY"></script>
+    <title>SansMeta — Remove Hidden AI Metadata Online for Free</title>
+    <meta
+      name="description"
+      content="Inspect and clean hidden AI metadata, provenance fields, and invisible Unicode characters from images, documents, audio, video, and text. Free, no account, originals never modified."
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!--
+      Canonical, Open Graph and Twitter metadata are injected by the FastAPI
+      backend at request time so they use the real deployment origin
+      (WEB_PUBLIC_ORIGIN). When the origin is not configured, the tags are
+      omitted and nothing broken is served.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SansMeta",
+        "url": "__ORIGIN__/",
+        "description": "Inspect and clean hidden AI metadata, provenance fields, and invisible Unicode characters from images, documents, audio, video, and text. Free online tool; originals are never modified.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Inspect hidden metadata before cleaning",
+          "Remove supported C2PA, EXIF and XMP AI provenance fields",
+          "Remove supported invisible Unicode characters from text",
+          "Download cleaned copies without modifying originals"
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does SansMeta remove?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "SansMeta removes supported hidden metadata — C2PA provenance and AI-related EXIF/XMP fields — from supported files, and strips supported invisible Unicode characters such as zero-width spaces from pasted text. It creates cleaned copies and never modifies your originals."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Will it remove a visible watermark or logo?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. SansMeta does not edit pixels. Visible watermarks and logos are part of the image itself and are left untouched."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between hidden metadata and a visible watermark?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Hidden metadata is data attached to a file — provenance, camera, or software fields — that you cannot see when viewing the file. A visible watermark is drawn into the picture. SansMeta cleans the former, not the latter."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can it remove pixel-level watermarks like SynthID?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Pixel-level watermarks modify image pixels in ways metadata cleaning cannot address. SansMeta does not claim to remove them."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How long are my files kept?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Temporary files are deleted after a completed download, when you start over, or when you choose Delete files. If immediate deletion cannot be confirmed, they expire automatically within __RETENTION_MINUTES__ minutes. Closing the page sends a best-effort deletion request, but a browser or network interruption may prevent confirmation."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my files private?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Files are processed on the server and stored only in temporary workspaces that are deleted after download, when you start over, when you choose Delete files, or within __RETENTION_MINUTES__ minutes. No account is required. Every job uses a separate random access token; anyone with the complete download link can use it while the job exists, so do not share it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which formats are supported?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Images such as PNG, JPEG, WebP, AVIF and HEIC; documents such as PDF, DOCX, XLSX, PPTX, EPUB, HTML and Markdown; audio such as MP3, WAV, M4A and FLAC; video such as MP4, MOV, MKV and WEBM; and plain-text formats such as TXT, JSON and CSV. Some formats, like PDFs, are cleaned best-effort depending on the tools installed on the server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Will cleaning bypass AI detectors?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. SansMeta removes supported metadata and hidden characters. It does not rewrite content, does not remove platform AI labels, and makes no guarantee about how AI detectors will classify a file."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it free? Do I need an account?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, SansMeta is free to use and requires no account."
+            }
+          }
+        ]
+      }
+    </script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-YEC7FP0XWY');
+      function gtag() {
+        dataLayer.push(arguments);
+      }
     </script>
   </head>
   <body>

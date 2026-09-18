@@ -17,6 +17,7 @@ export interface CleanResult {
 
 export interface CleanStartResponse {
   jobId: string
+  jobToken: string
   statusUrl: string
   zipUrl: string
 }
@@ -34,6 +35,13 @@ export interface TextResult {
   text?: string
   report?: Record<string, unknown>
   summary: string
+}
+
+export interface AppConfig {
+  jobTtlSeconds: number
+  maxBatchFiles: number
+  maxFileBytes: number
+  maxTextBytes: number
 }
 
 export const MAX_BATCH_FILES = 50
@@ -128,13 +136,44 @@ export function startClean(
   return upload<CleanStartResponse>('/api/clean', files, preserveMetadata, onProgress)
 }
 
-export async function jobStatus(jobId: string): Promise<JobStatus> {
-  return json(await fetch(`/api/jobs/${jobId}/status`))
+export async function jobStatus(statusUrl: string): Promise<JobStatus> {
+  return json(await fetch(statusUrl))
 }
 
-export async function cancelJob(jobId: string): Promise<void> {
-  const response = await fetch(`/api/jobs/${jobId}`, { method: 'DELETE' })
+/** Cancel a job's processing without deleting its files yet. */
+export async function cancelJob(jobId: string, jobToken: string): Promise<void> {
+  const response = await fetch(`/api/jobs/${jobId}/cancel?token=${encodeURIComponent(jobToken)}`, { method: 'POST' })
   if (!response.ok) throw new ApiError(response.status, 'Could not cancel the job.')
+}
+
+/** Immediately purge a job and delete all of its temporary files. */
+export async function deleteJob(jobId: string, jobToken: string): Promise<boolean> {
+  const response = await fetch(`/api/jobs/${jobId}?token=${encodeURIComponent(jobToken)}`, { method: 'DELETE' })
+  if (!response.ok) throw new ApiError(response.status, 'Could not delete the files.')
+  return ((await response.json()) as { deleted?: boolean }).deleted === true
+}
+
+/**
+ * Best-effort cleanup request for page close / unload. Uses a dedicated
+ * endpoint that always returns 200 so it is safe to fire via sendBeacon.
+ */
+export function requestCleanup(jobId: string, jobToken: string): void {
+  if (typeof window === 'undefined' || !jobId || !jobToken) return
+  const url = `/api/jobs/${jobId}/cleanup?token=${encodeURIComponent(jobToken)}`
+  try {
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(url)
+      return
+    }
+  } catch {
+    // fall through to fetch
+  }
+  fetch(url, { method: 'POST', keepalive: true }).catch(() => undefined)
+}
+
+export async function fetchConfig(): Promise<AppConfig> {
+  const response = await fetch('/api/config')
+  return json<AppConfig>(response)
 }
 
 export async function cleanText(text: string): Promise<TextResult> {
@@ -147,12 +186,27 @@ export async function cleanText(text: string): Promise<TextResult> {
   )
 }
 
-export function download(url: string): void {
+export async function download(url: string): Promise<void> {
+  const response = await fetch(url)
+  if (!response.ok) {
+    const message = response.status === 404
+      ? 'These files have expired or already been deleted.'
+      : `Download failed (${response.status})`
+    throw new ApiError(response.status, message)
+  }
+  const blob = await response.blob()
+  const disposition = response.headers.get('Content-Disposition') ?? ''
+  const encoded = disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1]
+  const quoted = disposition.match(/filename="([^"]+)"/i)?.[1]
+  const filename = encoded ? decodeURIComponent(encoded) : quoted ?? 'sansmeta-download'
+  const objectUrl = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
-  anchor.href = url
+  anchor.href = objectUrl
+  anchor.download = filename
   document.body.appendChild(anchor)
   anchor.click()
   anchor.remove()
+  URL.revokeObjectURL(objectUrl)
 }
 
 export function formatBytes(bytes: number): string {

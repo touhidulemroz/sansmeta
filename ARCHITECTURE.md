@@ -83,30 +83,31 @@ The output is locally signed and intended for the build machine, not notarized d
 
 The pinned revision is recorded in the README. Upstream hooks, skills, Docker services, and optional model/research backends are deliberately not vendored and never launched. See CONTRIBUTING.md for the update procedure.
 
-## Web version
+## Web version — SansMeta
 
-The browser version (`web/`) reuses the same adapter and engine, hosted behind FastAPI. The Mac app path is frozen — the web backend only invokes `app/bridge.py` read-only.
+The browser version (`web/`) is branded **SansMeta** and reuses the same adapter and engine, hosted behind FastAPI. The Mac app path is frozen — the web backend only invokes `app/bridge.py` read-only.
 
 ```mermaid
 flowchart LR
     UI[React frontend<br/>Vite + TypeScript, plain CSS] -->|multipart / JSON| API[FastAPI backend<br/>web/backend/main.py]
     API -->|subprocess, JSON| PROC[bridge.py<br/>app/bridge.py, unchanged]
     PROC --> ENGINE[Upstream cleaning engine]
-    API --> STORE[JobStore<br/>uploads/exports, 1-hour TTL]
+    API --> STORE[JobStore<br/>uploads/exports, 15-minute fallback TTL]
     API -->|serves built UI| UI
 ```
 
 | Layer | Location | Role |
 | --- | --- | --- |
-| Frontend | `web/frontend/src/` | Files/Text modes, batch workspace, progress, reports. Design system in `styles.css` (CSS tokens, light-first). See `web/README.md` |
+| Frontend | `web/frontend/src/` | Files/Text modes, batch workspace, progress, reports. Landing, branding and design system in `styles.css` (CSS tokens, light-first). See `web/README.md` |
 | API | `web/backend/main.py` | `/api/inspect`, `/api/clean` (async job), `/api/jobs/{id}/status` (poll), `/api/jobs/{id}/zip`, `/api/jobs/{id}` (cancel), `/api/text`, `/api/health` |
-| Jobs | `web/backend/jobs.py` | In-memory job store: per-job upload/export dirs, cancellation events, 1-hour auto-expiry |
+| Jobs | `web/backend/jobs.py` | In-memory job store: per-job upload/export dirs, cancellation events, response-completion cleanup, 15-minute fallback expiry |
 | Pipeline | `web/backend/pipeline.py` | Batch loops that call `inspect_file.py` / `clean_file.py` and map results back to job rows |
 | Bridge | `web/backend/bridge_client.py` | Replays the Mac adapter's JSON-over-stdio protocol against `app/bridge.py` |
 
 - Uploads are streamed to a per-job temp workspace; cleaned copies are served as downloads and the whole batch as a zip. Originals are never modified.
-- Limits: 50 files per batch, 256 MB per file, 8 MB per text paste. Jobs and files are deleted after one hour.
+- Limits: 50 files per batch, 256 MB per file, 8 MB per text paste. Temporary files are deleted after completed downloads, explicit/start-over cleanup, or within 15 minutes by default (configurable, `WEB_JOB_TTL_SECONDS`).
 - In production the backend serves the built frontend (`frontend/dist`) as a single deployable service (Dockerfile, `render.yaml`).
+- SEO: the landing HTML is prerendered into `dist/index.html` at build time; the backend injects canonical/social tags, serves `robots.txt`/`sitemap.xml`, and no-indexes `/api` responses, all driven by `WEB_PUBLIC_ORIGIN`. Analytics load only after consent.
 
 ## Testing
 

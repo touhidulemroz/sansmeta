@@ -43,7 +43,7 @@ def clean_batch(job, sources, preserve_metadata=True):
         export = response.get("output")
         if entry["ok"] and export:
             entry["warning"] = bool(response.get("warning"))
-            entry["downloadUrl"] = f"/api/jobs/{job.id}/files/{index}"
+            entry["downloadUrl"] = f"/api/jobs/{job.id}/files/{index}?token={job.token}"
             entry["report"] = response.get("report")
             job.files.append({"index": index, "name": source.name, "export": export})
         else:
