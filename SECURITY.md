@@ -15,7 +15,7 @@ We take the security and privacy of SansMeta seriously. As a tool built around m
 If you believe you have found a security vulnerability in SansMeta:
 
 1. **Do NOT open a public issue.**
-2. Please report vulnerabilities privately via [GitHub Security Advisories](https://github.com/touhidulemroz/watermarks-cleaner-mac/security/advisories/new).
+2. Please report vulnerabilities privately via [GitHub Security Advisories](https://github.com/touhidulemroz/sansmeta/security/advisories/new).
 3. If GitHub Private Vulnerability Reporting is unavailable, you can email the maintainer directly with reproduction steps, an impact assessment, and any proof-of-concept.
 
 ### What to include

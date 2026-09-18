@@ -176,7 +176,7 @@ export default function App() {
               <h4 className="footer-heading">Open Source</h4>
               <ul className="footer-nav-list">
                 <li>
-                  <a href="https://github.com/touhidulemroz/watermarks-cleaner-mac" target="_blank" rel="noreferrer">
+                  <a href="https://github.com/touhidulemroz/sansmeta" target="_blank" rel="noreferrer">
                     SansMeta on GitHub
                   </a>
                 </li>
